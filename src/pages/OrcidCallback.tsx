@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,12 +8,17 @@ import { Button } from '@/components/ui/button';
 
 export default function OrcidCallback() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { walletAddress } = useAuth();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('Processing ORCID verification...');
+  const hasProcessed = useRef(false);
 
   useEffect(() => {
     const handleCallback = async () => {
+      // Prevent duplicate processing
+      if (hasProcessed.current) return;
+      hasProcessed.current = true;
+
       try {
         const params = new URLSearchParams(window.location.search);
         const code = params.get('code');
@@ -28,13 +33,13 @@ export default function OrcidCallback() {
           throw new Error('No authorization code received');
         }
 
-        if (!user || state !== user.id) {
+        if (!walletAddress || state !== walletAddress) {
           throw new Error('Invalid state parameter');
         }
 
         // Call edge function to complete OAuth flow
         const { data, error: callbackError } = await supabase.functions.invoke('orcid-callback', {
-          body: { code, userId: user.id },
+          body: { code, walletAddress },
         });
 
         if (callbackError) throw callbackError;
@@ -53,10 +58,10 @@ export default function OrcidCallback() {
       }
     };
 
-    if (user) {
+    if (walletAddress) {
       handleCallback();
     }
-  }, [user, navigate]);
+  }, [walletAddress, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
