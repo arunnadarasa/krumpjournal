@@ -95,10 +95,38 @@
   font-style: italic;
 }
 
-.journal-content ul,
-.journal-content ol {
+.journal-content ul {
+  list-style-type: disc;
   margin: 1rem 0;
   padding-left: 2rem;
+}
+
+.journal-content ol {
+  list-style-type: decimal;
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.journal-content li {
+  margin-bottom: 0.5rem;
+  padding-left: 0.25rem;
+}
+
+.journal-content ul ul,
+.journal-content ol ul {
+  list-style-type: circle;
+  margin: 0.5rem 0;
+}
+
+.journal-content ul ul ul,
+.journal-content ol ul ul {
+  list-style-type: square;
+}
+
+.journal-content ol ol,
+.journal-content ul ol {
+  list-style-type: lower-alpha;
+  margin: 0.5rem 0;
 }
 
 .journal-content table {
