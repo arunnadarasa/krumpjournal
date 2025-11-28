@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { CoverImageUpload } from '@/components/CoverImageUpload';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -32,6 +33,8 @@ export const ArticleSubmissionForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [worldIdVerified, setWorldIdVerified] = useState(false);
   const [worldIdProof, setWorldIdProof] = useState<any>(null);
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
 
   const form = useForm<ArticleFormData>({
     resolver: zodResolver(articleSchema),
@@ -58,6 +61,11 @@ export const ArticleSubmissionForm = () => {
       return;
     }
 
+    if (!coverImage) {
+      toast.error('Please upload a cover image');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -73,9 +81,18 @@ export const ArticleSubmissionForm = () => {
 
       if (verifyError) throw verifyError;
 
-      // Step 2: Upload to IPFS via edge function
-      const doi = `10.KRUMPVERSE/article.${new Date().getFullYear()}.${Date.now()}`;
-      const { data: ipfsData, error: ipfsError } = await supabase.functions.invoke('upload-to-ipfs', {
+      // Step 2: Upload cover image to IPFS
+      const { data: coverData, error: coverError } = await supabase.functions.invoke('upload-cover-image', {
+        body: {
+          imageBase64: coverImagePreview,
+          fileName: coverImage.name,
+        },
+      });
+
+      if (coverError) throw coverError;
+
+      // Step 3: Upload article metadata (IPA + NFT) to IPFS
+      const { data: metadataResult, error: metadataError } = await supabase.functions.invoke('upload-article-metadata', {
         body: {
           title: data.title,
           abstract: data.abstract,
@@ -83,17 +100,16 @@ export const ArticleSubmissionForm = () => {
           keywords: data.keywords.split(',').map(k => k.trim()),
           publicationType: data.publicationType,
           license: data.license,
-          doi,
-          author: {
-            orcid: data.orcidId,
-            name: data.authorName,
-          },
+          authorName: data.authorName,
+          orcidId: data.orcidId,
+          coverImageIpfs: coverData.ipfsHash,
+          network: 'testnet',
         },
       });
 
-      if (ipfsError) throw ipfsError;
+      if (metadataError) throw metadataError;
 
-      // Step 3: Create article record
+      // Step 4: Create article record
       const { data: article, error: articleError } = await supabase
         .from('articles')
         .insert({
@@ -103,9 +119,14 @@ export const ArticleSubmissionForm = () => {
           keywords: data.keywords.split(',').map(k => k.trim()),
           publication_type: data.publicationType,
           license: data.license,
-          ipfs_hash: ipfsData.ipfsHash,
-          ipfs_gateway_url: ipfsData.gatewayUrl,
-          doi,
+          ipfs_hash: metadataResult.contentIpfsHash,
+          ipfs_gateway_url: metadataResult.contentGatewayUrl,
+          cover_image_ipfs: coverData.ipfsHash,
+          ipa_metadata_uri: metadataResult.ipaMetadataUri,
+          ipa_metadata_hash: metadataResult.ipaMetadataHash,
+          nft_metadata_uri: metadataResult.nftMetadataUri,
+          nft_metadata_hash: metadataResult.nftMetadataHash,
+          doi: metadataResult.doi,
           network: 'testnet',
           status: 'pending',
         })
@@ -114,7 +135,7 @@ export const ArticleSubmissionForm = () => {
 
       if (articleError) throw articleError;
 
-      // Step 4: Add author record
+      // Step 5: Add author record
       await supabase.from('article_authors').insert({
         article_id: article.id,
         orcid_id: data.orcidId,
@@ -122,18 +143,14 @@ export const ArticleSubmissionForm = () => {
         author_order: 1,
       });
 
-      // Step 5: Mint to Story via edge function
+      // Step 6: Mint to Story via edge function
       const { data: mintData, error: mintError } = await supabase.functions.invoke('mint-to-story', {
         body: {
           articleId: article.id,
-          ipfsHash: ipfsData.ipfsHash,
-          metadata: {
-            title: data.title,
-            abstract: data.abstract,
-            author: data.authorName,
-            orcid: data.orcidId,
-            doi,
-          },
+          ipaMetadataUri: metadataResult.ipaMetadataUri,
+          ipaMetadataHash: metadataResult.ipaMetadataHash,
+          nftMetadataUri: metadataResult.nftMetadataUri,
+          nftMetadataHash: metadataResult.nftMetadataHash,
         },
       });
 
@@ -143,6 +160,8 @@ export const ArticleSubmissionForm = () => {
       form.reset();
       setWorldIdVerified(false);
       setWorldIdProof(null);
+      setCoverImage(null);
+      setCoverImagePreview(null);
     } catch (error: any) {
       console.error('Submission error:', error);
       toast.error(error.message || 'Failed to submit article');
@@ -301,6 +320,14 @@ export const ArticleSubmissionForm = () => {
               )}
             />
           </div>
+
+          <CoverImageUpload
+            onImageSelect={(file, preview) => {
+              setCoverImage(file);
+              setCoverImagePreview(preview);
+            }}
+            disabled={isSubmitting}
+          />
 
           <div className="border rounded-lg p-6 bg-muted/30">
             <h3 className="font-semibold mb-4">Human Verification Required</h3>

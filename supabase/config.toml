@@ -1,6 +1,9 @@
 project_id = "olrejygsrwhclswrzvar"
 
-[functions.upload-to-ipfs]
+[functions.upload-cover-image]
+verify_jwt = true
+
+[functions.upload-article-metadata]
 verify_jwt = true
 
 [functions.mint-to-story]
