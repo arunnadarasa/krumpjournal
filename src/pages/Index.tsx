@@ -57,10 +57,12 @@ const Index = () => {
                 Upload PDF
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="w-full sm:w-auto gap-2">
-              <Search className="h-4 w-4" />
-              Browse Articles
-            </Button>
+            <Link to="/browse">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto gap-2">
+                <Search className="h-4 w-4" />
+                Browse Articles
+              </Button>
+            </Link>
           </div>
 
           {/* Features */}
