@@ -40,13 +40,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsLoading(false);
         
         // Fetch profile when user changes
-        if (session?.user) {
+        if (session?.user && address) {
           setTimeout(() => {
             supabase
               .from('profiles')
               .select('*')
-              .eq('id', session.user.id)
-              .single()
+              .eq('wallet_address', address)
+              .maybeSingle()
               .then(({ data }) => setProfile(data));
           }, 0);
         } else {
@@ -61,18 +61,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(session?.user ?? null);
       setIsLoading(false);
       
-      if (session?.user) {
+      if (session?.user && address) {
         supabase
           .from('profiles')
           .select('*')
-          .eq('id', session.user.id)
-          .single()
+          .eq('wallet_address', address)
+          .maybeSingle()
           .then(({ data }) => setProfile(data));
       }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [address]);
+
+  // Refetch profile when wallet address changes
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (address && session?.user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('wallet_address', address)
+          .maybeSingle();
+        setProfile(data);
+      }
+    };
+
+    fetchProfile();
+  }, [address, session]);
 
   // Auto-login with wallet address
   useEffect(() => {
