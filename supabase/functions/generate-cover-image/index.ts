@@ -31,7 +31,7 @@ serve(async (req) => {
         messages: [
           {
             role: "user",
-            content: `Generate a professional academic cover image for a research article. The theme is: ${prompt}. Style: modern, clean, scientific, high quality.`
+            content: `Generate a professional academic cover image for a research article. The theme is: ${prompt}. Style: modern, clean, scientific, high quality. IMPORTANT: The image must fill the ENTIRE canvas edge to edge with NO white borders, NO white margins, NO padding. Full bleed composition that extends to all edges.`
           }
         ],
         modalities: ["image", "text"]
