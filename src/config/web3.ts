@@ -1,45 +1,32 @@
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { Chain } from 'viem';
+import { connectorsForWallets } from '@rainbow-me/rainbowkit';
+import { metaMaskWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
+import { createConfig, http } from 'wagmi';
+import { STORY_TESTNET_CONFIG, STORY_MAINNET_CONFIG } from '@/lib/storyConfig';
 
-// Story Testnet (Aeneid)
-export const storyTestnet: Chain = {
-  id: 1315,
-  name: 'Story Testnet (Aeneid)',
-  nativeCurrency: { name: 'IP', symbol: 'IP', decimals: 18 },
-  rpcUrls: {
-    default: { http: ['https://aeneid.storyrpc.io'] },
-    public: { http: ['https://aeneid.storyrpc.io'] },
-  },
-  blockExplorers: {
-    default: { name: 'Story Explorer', url: 'https://aeneid.explorer.story.foundation' },
-  },
-  testnet: true,
-};
+// Export chain configs for use in other files
+export { STORY_TESTNET_CONFIG as storyTestnet, STORY_MAINNET_CONFIG as storyMainnet };
 
-// Story Mainnet
-export const storyMainnet: Chain = {
-  id: 1514,
-  name: 'Story Mainnet',
-  nativeCurrency: { name: 'IP', symbol: 'IP', decimals: 18 },
-  rpcUrls: {
-    default: { http: ['https://mainnet.storyrpc.io'] },
-    public: { http: ['https://mainnet.storyrpc.io'] },
-  },
-  blockExplorers: {
-    default: { name: 'Story Explorer', url: 'https://explorer.story.foundation' },
-  },
-  testnet: false,
-};
+// Configure wallet connectors with explicit MetaMask priority
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: 'Recommended',
+      wallets: [metaMaskWallet, walletConnectWallet],
+    },
+  ],
+  {
+    appName: 'KrumpVerse Journal',
+    projectId: import.meta.env.VITE_REOWN_PROJECT_ID || '',
+  }
+);
 
-// SPG Contract Addresses
-export const SPG_CONTRACTS = {
-  testnet: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc',
-  mainnet: '', // User must deploy their own
-};
-
-export const wagmiConfig = getDefaultConfig({
-  appName: 'KrumpVerse Journal',
-  projectId: import.meta.env.VITE_REOWN_PROJECT_ID || '',
-  chains: [storyTestnet],
+// Create wagmi config with explicit transports for both networks
+export const wagmiConfig = createConfig({
+  connectors,
+  chains: [STORY_TESTNET_CONFIG, STORY_MAINNET_CONFIG],
+  transports: {
+    [STORY_TESTNET_CONFIG.id]: http('https://aeneid.storyrpc.io'),
+    [STORY_MAINNET_CONFIG.id]: http('https://mainnet.storyrpc.io'),
+  },
   ssr: false,
 });

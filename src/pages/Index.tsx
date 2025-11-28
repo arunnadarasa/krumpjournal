@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { WalletConnect } from '@/components/WalletConnect';
+import { NetworkToggle } from '@/components/NetworkToggle';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Upload, Search } from 'lucide-react';
 
@@ -13,7 +14,10 @@ const Index = () => {
               <BookOpen className="h-6 w-6 text-accent" />
               <h1 className="text-xl font-semibold">KrumpVerse Journal</h1>
             </div>
-            <WalletConnect />
+            <div className="flex items-center gap-3">
+              <NetworkToggle />
+              <WalletConnect />
+            </div>
           </div>
         </div>
       </header>
