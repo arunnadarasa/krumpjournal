@@ -120,8 +120,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                   wallet_address: address,
                 });
             } else {
-              // Profile exists, just use it as-is
-              setProfile(existingProfile);
+              // Profile exists with different id - migrate to new user id
+              // This happens when same wallet reconnects and gets new anonymous session
+              
+              // Create new profile with current user id, copying existing data
+              const { data: newProfile, error: migrateError } = await supabase
+                .from('profiles')
+                .upsert({
+                  id: data.user.id,  // Use current session's user id
+                  wallet_address: existingProfile.wallet_address,
+                  orcid_id: existingProfile.orcid_id,
+                  orcid_name: existingProfile.orcid_name,
+                  orcid_verified: existingProfile.orcid_verified,
+                })
+                .select()
+                .single();
+
+              if (!migrateError && newProfile) {
+                // Delete the old profile (orphaned)
+                await supabase
+                  .from('profiles')
+                  .delete()
+                  .eq('id', existingProfile.id)
+                  .neq('id', data.user.id);  // Safety: don't delete if somehow same
+                
+                setProfile(newProfile);
+              } else {
+                console.error('Failed to migrate profile:', migrateError);
+                setProfile(existingProfile);  // Fallback
+              }
             }
           }
         } catch (err) {
