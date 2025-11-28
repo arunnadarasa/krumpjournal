@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,31 +11,21 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
-
     const body = await req.json();
     const { 
-      articleId, 
       ipaMetadataUri, 
       ipaMetadataHash, 
       nftMetadataUri, 
-      nftMetadataHash 
+      nftMetadataHash,
+      network 
     } = body;
 
-    console.log('Starting Story minting for article:', articleId);
+    console.log('Starting Story minting...');
+    console.log('Network:', network);
     console.log('IPA Metadata URI:', ipaMetadataUri);
     console.log('IPA Metadata Hash:', ipaMetadataHash);
     console.log('NFT Metadata URI:', nftMetadataUri);
     console.log('NFT Metadata Hash:', nftMetadataHash);
-
-    // Update article status to minting
-    await supabaseClient
-      .from('articles')
-      .update({ status: 'minting' })
-      .eq('id', articleId);
 
     // Note: Actual Story minting would happen here using Story Protocol SDK
     // const response = await client.ipAsset.mintAndRegisterIp({
@@ -52,31 +41,19 @@ serve(async (req) => {
     // Simulated transaction data
     const simulatedTxHash = `0x${Date.now().toString(16)}${Math.random().toString(16).slice(2)}`;
     const simulatedIpAssetId = `0x${Date.now().toString(16)}${Math.random().toString(16).slice(2)}`;
+    const spgContractAddress = '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc';
 
-    console.log('Minting simulation:', {
+    console.log('Minting simulation completed:', {
       txHash: simulatedTxHash,
       ipAssetId: simulatedIpAssetId,
     });
-
-    // Update article with minting results
-    const { error: updateError } = await supabaseClient
-      .from('articles')
-      .update({
-        status: 'minted',
-        transaction_hash: simulatedTxHash,
-        ip_asset_id: simulatedIpAssetId,
-        spg_contract_address: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc',
-        minted_at: new Date().toISOString(),
-      })
-      .eq('id', articleId);
-
-    if (updateError) throw updateError;
 
     return new Response(
       JSON.stringify({
         success: true,
         transactionHash: simulatedTxHash,
         ipAssetId: simulatedIpAssetId,
+        spgContractAddress,
         message: 'Article minted successfully (simulated)',
       }),
       {
@@ -87,24 +64,6 @@ serve(async (req) => {
     console.error('Minting error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     
-    // Update article status to failed if we have the articleId
-    try {
-      const body = await req.json();
-      const { articleId } = body;
-      if (articleId) {
-        const supabaseClient = createClient(
-          Deno.env.get('SUPABASE_URL') ?? '',
-          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-        );
-        await supabaseClient
-          .from('articles')
-          .update({ status: 'failed' })
-          .eq('id', articleId);
-      }
-    } catch (e) {
-      console.error('Failed to update article status:', e);
-    }
-
     return new Response(
       JSON.stringify({ error: errorMessage }),
       {
