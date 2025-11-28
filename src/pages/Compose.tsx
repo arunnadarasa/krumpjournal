@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Send, Loader2, CheckCircle, FileText, Image as ImageIcon, Upload, Coins, Download } from 'lucide-react';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import { pdf } from '@react-pdf/renderer';
+import { ArticlePdfDocument } from '@/components/ArticlePdfDocument';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -273,92 +273,70 @@ export default function Compose() {
     toast.success('Article generated! You can preview or download as PDF.');
   };
 
-  // Helper: Generate PDF from HTML as Base64
+  // Helper: Generate PDF from HTML as Base64 with selectable text
   const generatePdfBase64 = async (): Promise<string> => {
-    if (!articleHtml) throw new Error('No article HTML to convert');
-
-    const container = document.createElement('div');
-    container.innerHTML = articleHtml;
-    container.style.position = 'absolute';
-    container.style.left = '-9999px';
-    container.style.width = '8.5in';
-    document.body.appendChild(container);
-
-    try {
-      const canvas = await html2canvas(container, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff',
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-
-      const pageHeight = pdfHeight / ratio;
-      let position = 0;
-
-      while (position < imgHeight) {
-        pdf.addImage(imgData, 'PNG', 0, -position * ratio, imgWidth * ratio, imgHeight * ratio);
-        position += pageHeight;
-        if (position < imgHeight) pdf.addPage();
-      }
-
-      return pdf.output('dataurlstring').split(',')[1];
-    } finally {
-      document.body.removeChild(container);
-    }
+    const keywordsList = keywords.split(',').map(k => k.trim()).filter(Boolean);
+    
+    const doc = (
+      <ArticlePdfDocument
+        title={title}
+        authorName={profile?.orcid_name || 'Anonymous'}
+        orcidId={profile?.orcid_id}
+        keywords={keywordsList}
+        abstract={abstract}
+        content={content}
+        license={license}
+      />
+    );
+    
+    const blob = await pdf(doc).toBlob();
+    
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = (reader.result as string).split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
   };
 
-  // Download PDF locally
+  // Download PDF locally with selectable text
   const handleDownloadPdf = async () => {
-    if (!articleHtml) return;
-
-    const container = document.createElement('div');
-    container.innerHTML = articleHtml;
-    container.style.position = 'absolute';
-    container.style.left = '-9999px';
-    container.style.width = '8.5in';
-    document.body.appendChild(container);
+    if (!title || !abstract || !content) {
+      toast.error('Please fill in title, abstract, and content first');
+      return;
+    }
 
     try {
-      const canvas = await html2canvas(container, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff',
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-
-      const pageHeight = pdfHeight / ratio;
-      let position = 0;
-
-      while (position < imgHeight) {
-        pdf.addImage(imgData, 'PNG', 0, -position * ratio, imgWidth * ratio, imgHeight * ratio);
-        position += pageHeight;
-        if (position < imgHeight) pdf.addPage();
-      }
-
-      const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '_');
-      pdf.save(`${sanitizedTitle}.pdf`);
+      const keywordsList = keywords.split(',').map(k => k.trim()).filter(Boolean);
+      
+      const doc = (
+        <ArticlePdfDocument
+          title={title}
+          authorName={profile?.orcid_name || 'Anonymous'}
+          orcidId={profile?.orcid_id}
+          keywords={keywordsList}
+          abstract={abstract}
+          content={content}
+          license={license}
+        />
+      );
+      
+      const blob = await pdf(doc).toBlob();
+      
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${title.replace(/[^a-z0-9]/gi, '_')}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+      
       toast.success('PDF downloaded!');
     } catch (error: any) {
       console.error('PDF download error:', error);
       toast.error('Failed to download PDF');
-    } finally {
-      document.body.removeChild(container);
     }
   };
 
