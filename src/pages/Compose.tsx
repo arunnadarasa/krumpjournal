@@ -60,6 +60,7 @@ export default function Compose() {
   const [isGeneratingCover, setIsGeneratingCover] = useState(false);
   const [isUploadingIpfs, setIsUploadingIpfs] = useState(false);
   const [isMinting, setIsMinting] = useState(false);
+  const [showCoverImageModal, setShowCoverImageModal] = useState(false);
 
   // Auto-save draft every 30 seconds
   useEffect(() => {
@@ -783,7 +784,10 @@ export default function Compose() {
                   
                   {/* 1:1 Square Preview */}
                   {coverImageData && (
-                    <div className="aspect-square w-48 mx-auto rounded-lg overflow-hidden border border-border">
+                    <div 
+                      className="aspect-square w-48 mx-auto rounded-lg overflow-hidden border border-border cursor-pointer hover:opacity-90 transition-opacity"
+                      onClick={() => setShowCoverImageModal(true)}
+                    >
                       <img 
                         src={coverImageData.preview} 
                         alt="Cover preview" 
@@ -887,6 +891,21 @@ export default function Compose() {
       <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           {submissionData && <SubmissionSuccess {...submissionData} />}
+        </DialogContent>
+      </Dialog>
+
+      {/* Cover Image Preview Modal */}
+      <Dialog open={showCoverImageModal} onOpenChange={setShowCoverImageModal}>
+        <DialogContent className="max-w-2xl p-2">
+          {coverImageData && (
+            <div className="aspect-square w-full rounded-lg overflow-hidden">
+              <img 
+                src={coverImageData.preview} 
+                alt="Cover preview" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </>
