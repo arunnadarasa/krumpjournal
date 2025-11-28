@@ -3,16 +3,16 @@ import { WalletConnect } from '@/components/WalletConnect';
 import { NetworkToggle } from '@/components/NetworkToggle';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Upload, Search, PenTool } from 'lucide-react';
-
 const Index = () => {
-  return (
-    <div className="grain-texture min-h-screen" style={{ background: 'var(--gradient-subtle)' }}>
+  return <div className="grain-texture min-h-screen" style={{
+    background: 'var(--gradient-subtle)'
+  }}>
       <header className="border-b border-border/40 backdrop-blur-sm">
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
               <BookOpen className="h-6 w-6 text-accent" />
-              <h1 className="text-xl font-semibold">KrumpVerse Journal</h1>
+              <h1 className="text-xl font-semibold">Krump Journal</h1>
             </div>
             <div className="flex items-center gap-3">
               <NetworkToggle />
@@ -25,7 +25,10 @@ const Index = () => {
       <main className="container mx-auto px-6 py-20">
         <div className="max-w-4xl mx-auto text-center space-y-12">
           {/* Hero */}
-          <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0.1s', opacity: 0 }}>
+          <div className="space-y-6 animate-fade-in" style={{
+          animationDelay: '0.1s',
+          opacity: 0
+        }}>
             <h2 className="text-6xl md:text-7xl lg:text-8xl tracking-tight text-foreground">
               Decentralized
               <br />
@@ -38,10 +41,10 @@ const Index = () => {
           </div>
 
           {/* CTA Buttons */}
-          <div 
-            className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in"
-            style={{ animationDelay: '0.4s', opacity: 0 }}
-          >
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{
+          animationDelay: '0.4s',
+          opacity: 0
+        }}>
             <Link to="/compose">
               <Button size="lg" className="w-full sm:w-auto gap-2">
                 <PenTool className="h-4 w-4" />
@@ -61,10 +64,10 @@ const Index = () => {
           </div>
 
           {/* Features */}
-          <div 
-            className="grid md:grid-cols-3 gap-8 pt-12 animate-fade-in"
-            style={{ animationDelay: '0.6s', opacity: 0 }}
-          >
+          <div className="grid md:grid-cols-3 gap-8 pt-12 animate-fade-in" style={{
+          animationDelay: '0.6s',
+          opacity: 0
+        }}>
             <div className="space-y-3">
               <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
                 <BookOpen className="h-6 w-6 text-accent" />
@@ -97,10 +100,10 @@ const Index = () => {
           </div>
 
           {/* Tech Stack */}
-          <div 
-            className="pt-12 border-t border-border/40 animate-fade-in"
-            style={{ animationDelay: '0.8s', opacity: 0 }}
-          >
+          <div className="pt-12 border-t border-border/40 animate-fade-in" style={{
+          animationDelay: '0.8s',
+          opacity: 0
+        }}>
             <p className="text-xs text-muted-foreground/60 mb-4">Powered by</p>
             <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground/80">
               <span>Story</span>
@@ -116,8 +119,6 @@ const Index = () => {
           </div>
         </div>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
