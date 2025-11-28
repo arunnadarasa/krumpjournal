@@ -104,13 +104,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           });
           
           if (!error && data.user) {
-            // Create or update profile
-            await supabase
+            // Check if profile already exists for this wallet
+            const { data: existingProfile } = await supabase
               .from('profiles')
-              .upsert({
-                id: data.user.id,
-                wallet_address: address,
-              });
+              .select('*')
+              .eq('wallet_address', address)
+              .maybeSingle();
+
+            if (!existingProfile) {
+              // Only create if no profile exists for this wallet
+              await supabase
+                .from('profiles')
+                .insert({
+                  id: data.user.id,
+                  wallet_address: address,
+                });
+            } else {
+              // Profile exists, just use it as-is
+              setProfile(existingProfile);
+            }
           }
         } catch (err) {
           console.error('Wallet login error:', err);
