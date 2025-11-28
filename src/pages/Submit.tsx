@@ -33,6 +33,41 @@ const Submit = () => {
           </p>
         </div>
 
+        <div className="max-w-3xl mx-auto mb-8 p-6 bg-primary/5 border border-primary/20 rounded-lg">
+          <div className="flex items-start gap-4">
+            <div className="flex-1">
+              <h3 className="font-semibold text-foreground mb-2">
+                Format Your Article Professionally
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                For the best presentation, we recommend using Overleaf to format your 
+                research article. Overleaf is a free, collaborative LaTeX editor that 
+                produces publication-ready documents.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <a 
+                  href="https://www.overleaf.com/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <Button variant="outline" size="sm">
+                    Visit Overleaf
+                  </Button>
+                </a>
+                <a 
+                  href="https://www.overleaf.com/latex/templates" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <Button variant="ghost" size="sm">
+                    Browse Templates
+                  </Button>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <ArticleSubmissionForm />
       </main>
     </div>
