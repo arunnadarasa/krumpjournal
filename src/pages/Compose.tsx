@@ -539,7 +539,7 @@ export default function Compose() {
                   </Button>
                   {pdfData && (
                     <a href={pdfData.pdfGatewayUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:underline">
-                      View PDF
+                      View Article
                     </a>
                   )}
                 </div>
