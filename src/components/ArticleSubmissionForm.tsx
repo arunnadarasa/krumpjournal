@@ -228,7 +228,16 @@ export const ArticleSubmissionForm = () => {
                   />
                 </FormControl>
                 <FormDescription>
-                  Minimum 100 characters. For PDF uploads, please contact support.
+                  Minimum 100 characters. For best results, format your article using{' '}
+                  <a 
+                    href="https://www.overleaf.com/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Overleaf
+                  </a>{' '}
+                  and paste your content here.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
