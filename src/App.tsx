@@ -9,6 +9,7 @@ import { wagmiConfig } from './config/web3';
 import { AuthProvider } from './contexts/AuthContext';
 import Index from "./pages/Index";
 import Submit from "./pages/Submit";
+import Compose from "./pages/Compose";
 import OrcidCallback from "./pages/OrcidCallback";
 import NotFound from "./pages/NotFound";
 import '@rainbow-me/rainbowkit/styles.css';
@@ -27,6 +28,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/submit" element={<Submit />} />
+                <Route path="/compose" element={<Compose />} />
                 <Route path="/orcid/callback" element={<OrcidCallback />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

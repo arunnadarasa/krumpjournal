@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { WalletConnect } from '@/components/WalletConnect';
 import { NetworkToggle } from '@/components/NetworkToggle';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Upload, Search } from 'lucide-react';
+import { BookOpen, Upload, Search, PenTool } from 'lucide-react';
 
 const Index = () => {
   return (
@@ -32,8 +32,8 @@ const Index = () => {
               <span className="text-accent">Krump Research</span>
             </h2>
             <p className="text-lg md:text-xl text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed">
-              Publish, archive, and discover academic research on Krump culture. 
-              Permanently stored on Story blockchain.
+              Compose, publish, and archive academic research on Krump culture with professional formatting. 
+              Permanently stored on Story blockchain with DOI registration via Zenodo.
             </p>
           </div>
 
@@ -42,10 +42,16 @@ const Index = () => {
             className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in"
             style={{ animationDelay: '0.4s', opacity: 0 }}
           >
-            <Link to="/submit">
+            <Link to="/compose">
               <Button size="lg" className="w-full sm:w-auto gap-2">
+                <PenTool className="h-4 w-4" />
+                Compose Article
+              </Button>
+            </Link>
+            <Link to="/submit">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto gap-2">
                 <Upload className="h-4 w-4" />
-                Submit Research
+                Upload PDF
               </Button>
             </Link>
             <Button size="lg" variant="outline" className="w-full sm:w-auto gap-2">
