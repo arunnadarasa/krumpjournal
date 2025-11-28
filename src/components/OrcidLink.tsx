@@ -8,17 +8,17 @@ import { CheckCircle2, Link as LinkIcon, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const OrcidLink = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, walletAddress } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLinkOrcid = () => {
-    if (!user) {
+    if (!user || !walletAddress) {
       toast.error('Please connect your wallet first');
       return;
     }
 
     setIsLoading(true);
-    const state = user.id;
+    const state = walletAddress;
     const authUrl = getOrcidAuthUrl(state);
     window.location.href = authUrl;
   };

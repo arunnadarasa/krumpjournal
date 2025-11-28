@@ -13,10 +13,10 @@ serve(async (req) => {
   }
 
   try {
-    const { code, userId } = await req.json();
+    const { code, walletAddress } = await req.json();
     
-    if (!code || !userId) {
-      throw new Error('Missing code or userId');
+    if (!code || !walletAddress) {
+      throw new Error('Missing code or walletAddress');
     }
 
     const orcidClientId = Deno.env.get('ORCID_CLIENT_ID');
@@ -61,7 +61,7 @@ serve(async (req) => {
         orcid_name: name,
         orcid_verified: true,
       })
-      .eq('id', userId);
+      .eq('wallet_address', walletAddress);
 
     if (updateError) {
       console.error('Profile update error:', updateError);
