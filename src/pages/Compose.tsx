@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Send, Loader2, CheckCircle, FileText, Image as ImageIcon, Upload, Coins, Download } from 'lucide-react';
 import { pdf } from '@react-pdf/renderer';
+import { useWalletClient } from 'wagmi';
+import { StoryClient, StoryConfig } from '@story-protocol/core-sdk';
+import { custom, toHex } from 'viem';
 import { ArticlePdfDocument } from '@/components/ArticlePdfDocument';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,10 +21,12 @@ import { ArticleEditor } from '@/components/editor/ArticleEditor';
 import { ArticlePreview } from '@/components/editor/ArticlePreview';
 import { SubmissionSuccess } from '@/components/SubmissionSuccess';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { getStoryConfig, SPG_CONTRACTS } from '@/lib/storyConfig';
 
 export default function Compose() {
   const navigate = useNavigate();
   const { user, profile, walletAddress } = useAuth();
+  const { data: walletClient } = useWalletClient();
   const [title, setTitle] = useState('');
   const [abstract, setAbstract] = useState('');
   const [content, setContent] = useState('');
@@ -472,30 +477,47 @@ export default function Compose() {
       return;
     }
 
-    if (!walletAddress) {
+    if (!walletClient) {
       toast.error('Please connect your wallet');
       return;
     }
 
     setIsMinting(true);
     try {
-      const mintResponse = await supabase.functions.invoke('mint-to-story', {
-        body: {
-          nftMetadataUri: ipfsData.nftMetadataUri,
-          nftMetadataHash: ipfsData.nftMetadataHash,
-          ipaMetadataUri: ipfsData.ipaMetadataUri,
-          ipaMetadataHash: ipfsData.ipaMetadataHash,
-          network,
-        }
+      // Create Story client with user's wallet
+      const chainId = walletClient.chain?.id || 1315;
+      const storyConfig = getStoryConfig(chainId);
+      
+      const config: StoryConfig = {
+        wallet: walletClient,
+        transport: custom(walletClient.transport),
+        chainId: storyConfig.chain.id === 1315 ? 'aeneid' : 'mainnet',
+      };
+      
+      const client = StoryClient.newClient(config);
+      
+      // This will trigger MetaMask to sign the transaction!
+      const response = await client.ipAsset.registerIpAsset({
+        nft: {
+          type: 'mint',
+          spgNftContract: storyConfig.spgContract as `0x${string}`,
+        },
+        ipMetadata: {
+          ipMetadataURI: ipfsData.ipaMetadataUri,
+          ipMetadataHash: ipfsData.ipaMetadataHash as `0x${string}`,
+          nftMetadataURI: ipfsData.nftMetadataUri,
+          nftMetadataHash: ipfsData.nftMetadataHash as `0x${string}`,
+        },
       });
 
-      if (mintResponse.error) throw mintResponse.error;
-
-      const { ipAssetId, transactionHash, spgContractAddress } = mintResponse.data;
-      setMintData({ transactionHash, ipAssetId, spgContractAddress });
+      setMintData({ 
+        transactionHash: response.txHash, 
+        ipAssetId: response.ipId,
+        spgContractAddress: storyConfig.spgContract 
+      });
 
       toast.success('Minted on Story Protocol!', {
-        description: `IP Asset ID: ${ipAssetId.slice(0, 20)}...`
+        description: `IP Asset ID: ${response.ipId.slice(0, 20)}...`
       });
     } catch (error: any) {
       console.error('Minting error:', error);
