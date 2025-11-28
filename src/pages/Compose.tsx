@@ -534,6 +534,11 @@ export default function Compose() {
       return;
     }
 
+    if (!profile?.id) {
+      toast.error('Profile not found. Please reconnect your wallet.');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const { data: article, error: dbError } = await supabase
@@ -557,7 +562,7 @@ export default function Compose() {
           publication_type: publicationType,
           license,
           network,
-          author_id: user.id,
+          author_id: profile?.id || user.id,
           status: 'published',
           minted_at: new Date().toISOString(),
         })
