@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArticleSubmissionForm } from '@/components/ArticleSubmissionForm';
 import { WalletConnect } from '@/components/WalletConnect';
+import { OrcidLink } from '@/components/OrcidLink';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -19,7 +20,10 @@ const Submit = () => {
               </Link>
               <h1 className="text-2xl font-semibold">Submit Article</h1>
             </div>
-            <WalletConnect />
+            <div className="flex items-center gap-3">
+              <OrcidLink />
+              <WalletConnect />
+            </div>
           </div>
         </div>
       </header>

@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { useAccount } from 'wagmi';
 import { supabase } from '@/integrations/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
+import type { Tables } from '@/integrations/supabase/types';
 
 interface AuthContextType {
   user: User | null;
@@ -9,6 +10,7 @@ interface AuthContextType {
   walletAddress: string | undefined;
   isAuthenticated: boolean;
   isLoading: boolean;
+  profile: Tables<'profiles'> | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -17,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
   walletAddress: undefined,
   isAuthenticated: false,
   isLoading: true,
+  profile: null,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -25,6 +28,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [profile, setProfile] = useState<Tables<'profiles'> | null>(null);
   const { address } = useAccount();
 
   useEffect(() => {
@@ -34,6 +38,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setSession(session);
         setUser(session?.user ?? null);
         setIsLoading(false);
+        
+        // Fetch profile when user changes
+        if (session?.user) {
+          setTimeout(() => {
+            supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', session.user.id)
+              .single()
+              .then(({ data }) => setProfile(data));
+          }, 0);
+        } else {
+          setProfile(null);
+        }
       }
     );
 
@@ -42,6 +60,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);
+      
+      if (session?.user) {
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single()
+          .then(({ data }) => setProfile(data));
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -86,6 +113,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         walletAddress: address,
         isAuthenticated: !!session && !!address,
         isLoading,
+        profile,
       }}
     >
       {children}
