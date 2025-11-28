@@ -66,6 +66,11 @@ export const getStoryConfig = (chainId: number) => {
   }
 };
 
+// Get Story chain ID string for SDK
+export const getStoryChainId = (chainId: number): 'aeneid' | 'mainnet' => {
+  return chainId === 1315 ? 'aeneid' : 'mainnet';
+};
+
 // Convert IPFS hash to gateway URL
 export const convertIpfsToGateway = (ipfsHash: string): string => {
   if (ipfsHash.startsWith('ipfs://')) {
