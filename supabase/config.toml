@@ -1,1 +1,7 @@
 project_id = "olrejygsrwhclswrzvar"
+
+[functions.upload-to-ipfs]
+verify_jwt = true
+
+[functions.mint-to-story]
+verify_jwt = true
