@@ -21,6 +21,7 @@ serve(async (req) => {
       authorName, 
       orcidId,
       coverImageIpfs,
+      pdfIpfsHash,
       network 
     } = await req.json();
 
@@ -34,7 +35,7 @@ serve(async (req) => {
     // Generate DOI
     const timestamp = Date.now();
     const year = new Date().getFullYear();
-    const doi = `10.KRUMPVERSE/article.${year}.${timestamp}`;
+    const doi = `10.KRUMPJOURNAL/article.${year}.${timestamp}`;
     const doiUrl = `https://doi.org/${doi}`;
 
     // Network-specific URLs
@@ -54,6 +55,7 @@ serve(async (req) => {
       description: abstract,
       image: coverImageUri,
       external_url: explorerUrl,
+      content_url: pdfIpfsHash ? `https://gateway.pinata.cloud/ipfs/${pdfIpfsHash}` : undefined,
       attributes: [
         { trait_type: 'DOI', value: doi },
         { trait_type: 'Type', value: publicationType },
@@ -62,12 +64,13 @@ serve(async (req) => {
         { trait_type: 'Generated', value: new Date().toISOString() },
         { trait_type: 'License', value: license },
         { trait_type: 'Keywords', value: keywords.join(', ') },
+        { trait_type: 'PDF', value: pdfIpfsHash ? `ipfs://${pdfIpfsHash}` : 'N/A' },
       ],
     };
 
     // Create NFT metadata (ERC-721 standard)
     const nftMetadata = {
-      name: `KrumpVerse Journal: ${title}`,
+      name: `Krump Journal: ${title}`,
       description: abstract,
       image: coverImageUri,
       external_url: scanUrl,

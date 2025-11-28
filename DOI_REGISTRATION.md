@@ -1,10 +1,10 @@
 # DOI Registration Guide
 
-## About DOIs in KrumpVerse Journal
+## About DOIs in Krump Journal
 
-Articles submitted through KrumpVerse Journal receive a simulated DOI in the format:
+Articles submitted through Krump Journal receive a simulated DOI in the format:
 ```
-10.KRUMPVERSE/article.{year}.{timestamp}
+10.KRUMPJOURNAL/article.{year}.{timestamp}
 ```
 
 This DOI is stored in the article metadata on IPFS and Story blockchain, but it is **not yet registered** with a DOI Registration Agency.
@@ -35,7 +35,7 @@ To make your DOI resolvable and officially registered, you should register it th
    - This DOI will be permanently linked to your article
 
 5. **Update Your Article Record** (Future Feature)
-   - You'll be able to update your KrumpVerse article with the official Zenodo DOI
+   - You'll be able to update your Krump Journal article with the official Zenodo DOI
    - This creates a verifiable link between the Story blockchain record and the official DOI
 
 ## Why Register with Zenodo?
@@ -49,8 +49,8 @@ To make your DOI resolvable and officially registered, you should register it th
 
 ## Current DOI Status
 
-The simulated DOIs (`10.KRUMPVERSE/*`) serve as:
-- Unique identifiers within the KrumpVerse ecosystem
+The simulated DOIs (`10.KRUMPJOURNAL/*`) serve as:
+- Unique identifiers within the Krump Journal ecosystem
 - Metadata stored on Story blockchain
 - Placeholders until official DOI registration
 

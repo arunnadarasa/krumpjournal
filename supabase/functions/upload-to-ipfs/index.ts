@@ -49,7 +49,7 @@ serve(async (req) => {
       body: JSON.stringify({
         pinataContent: metadata,
         pinataMetadata: {
-          name: `${title} - KrumpVerse Journal`,
+          name: `${title} - Krump Journal`,
         },
       }),
     });

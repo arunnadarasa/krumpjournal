@@ -435,6 +435,7 @@ export default function Compose() {
           publicationType,
           license,
           coverImageIpfs: coverIpfsHash,
+          pdfIpfsHash: pdfData?.pdfIpfsHash,
           network,
         }
       });
@@ -906,7 +907,7 @@ export default function Compose() {
                     abstract={abstract}
                     content={content}
                     keywords={keywords.split(',').map(k => k.trim()).filter(Boolean)}
-                    doi="10.KRUMPVERSE/..."
+                    doi="10.KRUMPJOURNAL/..."
                   />
                 </div>
               </Card>

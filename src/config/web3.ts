@@ -15,7 +15,7 @@ const connectors = connectorsForWallets(
     },
   ],
   {
-    appName: 'KrumpVerse Journal',
+    appName: 'Krump Journal',
     projectId: import.meta.env.VITE_REOWN_PROJECT_ID || '',
   }
 );
