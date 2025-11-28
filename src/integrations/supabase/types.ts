@@ -49,6 +49,36 @@ export type Database = {
           },
         ]
       }
+      article_drafts: {
+        Row: {
+          author_id: string
+          content: Json | null
+          created_at: string | null
+          id: string
+          last_saved_at: string | null
+          metadata: Json | null
+          title: string | null
+        }
+        Insert: {
+          author_id: string
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          last_saved_at?: string | null
+          metadata?: Json | null
+          title?: string | null
+        }
+        Update: {
+          author_id?: string
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          last_saved_at?: string | null
+          metadata?: Json | null
+          title?: string | null
+        }
+        Relationships: []
+      }
       articles: {
         Row: {
           abstract: string
@@ -68,6 +98,7 @@ export type Database = {
           network: Database["public"]["Enums"]["network_type"]
           nft_metadata_hash: string | null
           nft_metadata_uri: string | null
+          pdf_ipfs_hash: string | null
           publication_type: Database["public"]["Enums"]["publication_type"]
           spg_contract_address: string | null
           status: string | null
@@ -75,6 +106,7 @@ export type Database = {
           title: string
           transaction_hash: string | null
           updated_at: string | null
+          zenodo_doi: string | null
         }
         Insert: {
           abstract: string
@@ -94,6 +126,7 @@ export type Database = {
           network?: Database["public"]["Enums"]["network_type"]
           nft_metadata_hash?: string | null
           nft_metadata_uri?: string | null
+          pdf_ipfs_hash?: string | null
           publication_type: Database["public"]["Enums"]["publication_type"]
           spg_contract_address?: string | null
           status?: string | null
@@ -101,6 +134,7 @@ export type Database = {
           title: string
           transaction_hash?: string | null
           updated_at?: string | null
+          zenodo_doi?: string | null
         }
         Update: {
           abstract?: string
@@ -120,6 +154,7 @@ export type Database = {
           network?: Database["public"]["Enums"]["network_type"]
           nft_metadata_hash?: string | null
           nft_metadata_uri?: string | null
+          pdf_ipfs_hash?: string | null
           publication_type?: Database["public"]["Enums"]["publication_type"]
           spg_contract_address?: string | null
           status?: string | null
@@ -127,6 +162,7 @@ export type Database = {
           title?: string
           transaction_hash?: string | null
           updated_at?: string | null
+          zenodo_doi?: string | null
         }
         Relationships: [
           {
