@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Send, Loader2, CheckCircle, FileText, Image as ImageIcon, Upload, Coins } from 'lucide-react';
+import { ArrowLeft, Save, Send, Loader2, CheckCircle, FileText, Image as ImageIcon, Upload, Coins, Download } from 'lucide-react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -34,6 +36,7 @@ export default function Compose() {
   const [submissionData, setSubmissionData] = useState<any>(null);
 
   // Step-by-step publishing state
+  const [articleHtml, setArticleHtml] = useState<string | null>(null);
   const [pdfData, setPdfData] = useState<{ pdfIpfsHash: string; pdfGatewayUrl: string } | null>(null);
   const [coverImageData, setCoverImageData] = useState<{ imageBase64: string; preview: string } | null>(null);
   const [coverImageIpfs, setCoverImageIpfs] = useState<{ ipfsHash: string; gatewayUrl: string } | null>(null);
@@ -53,7 +56,7 @@ export default function Compose() {
   } | null>(null);
 
   // Loading states for each step
-  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [isGeneratingArticle, setIsGeneratingArticle] = useState(false);
   const [isGeneratingCover, setIsGeneratingCover] = useState(false);
   const [isUploadingIpfs, setIsUploadingIpfs] = useState(false);
   const [isMinting, setIsMinting] = useState(false);
@@ -101,45 +104,261 @@ export default function Compose() {
     return () => clearInterval(interval);
   }, [user, title, content, abstract, keywords, publicationType, license, network, draftId]);
 
-  // Step 1: Generate PDF
-  const handleGeneratePdf = async () => {
-    if (!user || !profile) {
-      toast.error('Please sign in first');
-      return;
+  // Helper: Generate HTML article content
+  const generateArticleHtml = () => {
+    const keywordsList = keywords.split(',').map(k => k.trim()).filter(Boolean);
+    
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title}</title>
+  <style>
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      line-height: 1.8;
+      max-width: 8.5in;
+      margin: 0 auto;
+      padding: 1.5rem;
+      background: white;
+      color: #1a1a1a;
     }
+    .journal-name {
+      text-align: center;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+    .journal-header {
+      text-align: center;
+      border-bottom: 2px solid #333;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    .journal-title {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 0.75rem;
+      color: #000;
+      line-height: 1.3;
+    }
+    .journal-authors {
+      font-size: 16px;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+    .keywords {
+      font-size: 13px;
+      color: #666;
+      margin: 1rem 0;
+      text-align: center;
+    }
+    .journal-abstract {
+      font-style: italic;
+      padding: 1.25rem;
+      border-left: 4px solid #333;
+      background: #f9f9f9;
+      margin: 1.5rem 0;
+      font-size: 14px;
+    }
+    .journal-abstract strong {
+      display: block;
+      font-style: normal;
+      margin-bottom: 0.5rem;
+      font-size: 16px;
+    }
+    .journal-content {
+      margin-top: 2rem;
+      color: #1a1a1a;
+    }
+    .journal-content h1,
+    .journal-content h2,
+    .journal-content h3 {
+      font-variant: small-caps;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.25rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: #000;
+    }
+    .journal-content h1 { font-size: 22px; }
+    .journal-content h2 { font-size: 18px; }
+    .journal-content h3 { font-size: 16px; }
+    .journal-content p {
+      margin-bottom: 1rem;
+      text-align: justify;
+    }
+    .journal-content strong,
+    .journal-content b {
+      font-weight: 700;
+    }
+    .journal-content em,
+    .journal-content i {
+      font-style: italic;
+    }
+    .journal-content u {
+      text-decoration: underline;
+    }
+    .journal-content ul {
+      list-style-type: disc;
+      margin: 1rem 0;
+      padding-left: 2rem;
+    }
+    .journal-content ol {
+      list-style-type: decimal;
+      margin: 1rem 0;
+      padding-left: 2rem;
+    }
+    .journal-content li {
+      margin-bottom: 0.5rem;
+      padding-left: 0.25rem;
+    }
+    .journal-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    .journal-content table th,
+    .journal-content table td {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      text-align: left;
+    }
+    .journal-content table th {
+      background: #f5f5f5;
+      font-weight: bold;
+    }
+    .journal-content img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 1.5rem auto;
+    }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid #ccc;
+      font-size: 11px;
+      color: #666;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="journal-name">KRUMP JOURNAL</div>
+  <div class="journal-header">
+    <h1 class="journal-title">${title}</h1>
+    <div class="journal-authors">${profile?.orcid_name || 'Anonymous'}${profile?.orcid_id ? ` (ORCID: ${profile.orcid_id})` : ''}</div>
+  </div>
+  ${keywordsList.length > 0 ? `<div class="keywords"><strong>Keywords:</strong> ${keywordsList.join(', ')}</div>` : ''}
+  ${abstract ? `<div class="journal-abstract"><strong>Abstract</strong><p>${abstract}</p></div>` : ''}
+  <div class="journal-content">${content}</div>
+  <footer>© ${new Date().getFullYear()} Krump Journal. Licensed under ${license}</footer>
+</body>
+</html>`;
+  };
 
+  // Step 1: Generate Article HTML
+  const handleGenerateArticle = () => {
     if (!title || !abstract || !content) {
       toast.error('Please fill in title, abstract, and content');
       return;
     }
+    
+    const html = generateArticleHtml();
+    setArticleHtml(html);
+    toast.success('Article generated! You can preview or download as PDF.');
+  };
 
-    setIsGeneratingPdf(true);
+  // Helper: Generate PDF from HTML as Base64
+  const generatePdfBase64 = async (): Promise<string> => {
+    if (!articleHtml) throw new Error('No article HTML to convert');
+
+    const container = document.createElement('div');
+    container.innerHTML = articleHtml;
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
+    container.style.width = '8.5in';
+    document.body.appendChild(container);
+
     try {
-      const pdfResponse = await supabase.functions.invoke('generate-article-pdf', {
-        body: {
-          title,
-          authors: profile.orcid_name || 'Anonymous',
-          orcidId: profile.orcid_id,
-          abstract,
-          content,
-          keywords: keywords.split(',').map(k => k.trim()).filter(Boolean),
-          license,
-        }
+      const canvas = await html2canvas(container, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
       });
 
-      if (pdfResponse.error) throw pdfResponse.error;
-      
-      const { pdfIpfsHash, pdfGatewayUrl } = pdfResponse.data;
-      setPdfData({ pdfIpfsHash, pdfGatewayUrl });
-      
-      toast.success('PDF generated successfully!', {
-        description: `IPFS Hash: ${pdfIpfsHash.slice(0, 20)}...`
-      });
-    } catch (error: any) {
-      console.error('PDF generation error:', error);
-      toast.error(error.message || 'Failed to generate PDF');
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+
+      const pageHeight = pdfHeight / ratio;
+      let position = 0;
+
+      while (position < imgHeight) {
+        pdf.addImage(imgData, 'PNG', 0, -position * ratio, imgWidth * ratio, imgHeight * ratio);
+        position += pageHeight;
+        if (position < imgHeight) pdf.addPage();
+      }
+
+      return pdf.output('dataurlstring').split(',')[1];
     } finally {
-      setIsGeneratingPdf(false);
+      document.body.removeChild(container);
+    }
+  };
+
+  // Download PDF locally
+  const handleDownloadPdf = async () => {
+    if (!articleHtml) return;
+
+    const container = document.createElement('div');
+    container.innerHTML = articleHtml;
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
+    container.style.width = '8.5in';
+    document.body.appendChild(container);
+
+    try {
+      const canvas = await html2canvas(container, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+
+      const pageHeight = pdfHeight / ratio;
+      let position = 0;
+
+      while (position < imgHeight) {
+        pdf.addImage(imgData, 'PNG', 0, -position * ratio, imgWidth * ratio, imgHeight * ratio);
+        position += pageHeight;
+        if (position < imgHeight) pdf.addPage();
+      }
+
+      const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '_');
+      pdf.save(`${sanitizedTitle}.pdf`);
+      toast.success('PDF downloaded!');
+    } catch (error: any) {
+      console.error('PDF download error:', error);
+      toast.error('Failed to download PDF');
+    } finally {
+      document.body.removeChild(container);
     }
   };
 
@@ -177,8 +396,8 @@ export default function Compose() {
 
   // Step 3: Upload to IPFS
   const handleUploadToIpfs = async () => {
-    if (!pdfData) {
-      toast.error('Please generate PDF first');
+    if (!articleHtml) {
+      toast.error('Please generate article first');
       return;
     }
     if (!coverImageData) {
@@ -188,7 +407,23 @@ export default function Compose() {
 
     setIsUploadingIpfs(true);
     try {
-      // Upload cover image to IPFS
+      // 1. Generate PDF from HTML and upload to IPFS
+      const pdfBase64 = await generatePdfBase64();
+      
+      const pdfUploadResponse = await supabase.functions.invoke('upload-article-pdf', {
+        body: {
+          pdfBase64: pdfBase64,
+          fileName: `${title.replace(/\s+/g, '-').toLowerCase()}.pdf`,
+        }
+      });
+
+      if (pdfUploadResponse.error) throw pdfUploadResponse.error;
+      
+      const { ipfsHash: pdfIpfsHash, gatewayUrl: pdfGatewayUrl } = pdfUploadResponse.data;
+      setPdfData({ pdfIpfsHash, pdfGatewayUrl });
+      toast.success('PDF uploaded to IPFS!');
+
+      // 2. Upload cover image to IPFS
       const coverUploadResponse = await supabase.functions.invoke('upload-cover-image', {
         body: {
           imageBase64: coverImageData.imageBase64,
@@ -204,7 +439,7 @@ export default function Compose() {
       setCoverImageIpfs({ ipfsHash: coverIpfsHash, gatewayUrl: coverGatewayUrl });
       toast.success('Cover image uploaded to IPFS!');
 
-      // Upload metadata
+      // 3. Upload metadata
       const metadataResponse = await supabase.functions.invoke('upload-article-metadata', {
         body: {
           title,
@@ -242,7 +477,7 @@ export default function Compose() {
         nftMetadataHash,
       });
 
-      toast.success('Metadata uploaded to IPFS!');
+      toast.success('All content uploaded to IPFS!');
     } catch (error: any) {
       console.error('IPFS upload error:', error);
       toast.error(error.message || 'Failed to upload to IPFS');
@@ -521,26 +756,26 @@ export default function Compose() {
               <Card className="p-6 space-y-4">
                 <h3 className="font-semibold text-lg">Publishing Steps</h3>
                 
-                {/* Step 1: Generate PDF */}
+                {/* Step 1: Generate Article */}
                 <div className="flex items-center gap-3">
                   <Button
-                    onClick={handleGeneratePdf}
-                    disabled={isGeneratingPdf || !title || !abstract || !content}
-                    variant={pdfData ? "outline" : "default"}
+                    onClick={handleGenerateArticle}
+                    disabled={isGeneratingArticle || !title || !abstract || !content}
+                    variant={articleHtml ? "outline" : "default"}
                     className="flex-1"
                   >
-                    {isGeneratingPdf ? (
-                      <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating PDF...</>
-                    ) : pdfData ? (
-                      <><CheckCircle className="mr-2 h-4 w-4 text-green-500" /> PDF Generated</>
+                    {isGeneratingArticle ? (
+                      <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</>
+                    ) : articleHtml ? (
+                      <><CheckCircle className="mr-2 h-4 w-4 text-green-500" /> Article Ready</>
                     ) : (
-                      <><FileText className="mr-2 h-4 w-4" /> 1. Generate PDF</>
+                      <><FileText className="mr-2 h-4 w-4" /> 1. Generate Article</>
                     )}
                   </Button>
-                  {pdfData && (
-                    <a href={pdfData.pdfGatewayUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:underline">
-                      View Article
-                    </a>
+                  {articleHtml && (
+                    <Button variant="ghost" size="sm" onClick={handleDownloadPdf}>
+                      <Download className="mr-1 h-4 w-4" /> Download PDF
+                    </Button>
                   )}
                 </div>
 
@@ -549,7 +784,7 @@ export default function Compose() {
                   <div className="flex items-center gap-3">
                     <Button
                       onClick={handleGenerateCoverImage}
-                      disabled={isGeneratingCover || !pdfData}
+                      disabled={isGeneratingCover || !articleHtml}
                       variant={coverImageData ? "outline" : "default"}
                       className="flex-1"
                     >

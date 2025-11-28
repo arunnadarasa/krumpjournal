@@ -9,6 +9,9 @@ verify_jwt = true
 [functions.mint-to-story]
 verify_jwt = true
 
+[functions.upload-article-pdf]
+verify_jwt = false
+
 [functions.generate-cover-image]
 verify_jwt = false
 
