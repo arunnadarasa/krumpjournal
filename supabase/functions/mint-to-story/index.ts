@@ -20,7 +20,7 @@ serve(async (req) => {
     const body = await req.json();
     const { articleId, ipfsHash, metadata } = body;
 
-    console.log('Starting Story Protocol minting for article:', articleId);
+    console.log('Starting Story minting for article:', articleId);
 
     // Update article status to minting
     await supabaseClient
@@ -28,7 +28,7 @@ serve(async (req) => {
       .update({ status: 'minting' })
       .eq('id', articleId);
 
-    // Note: Actual Story Protocol minting would happen here
+    // Note: Actual Story minting would happen here
     // For now, we'll simulate the minting process
     // In production, you would:
     // 1. Use viem to connect to Story Protocol

@@ -28,7 +28,7 @@ const Submit = () => {
         <div className="mb-8 text-center">
           <h2 className="text-3xl font-bold mb-2">Publish Your Research</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Submit your Krump research to be permanently archived on Story Protocol. 
+            Submit your Krump research to be permanently archived on Story. 
             All submissions require World ID verification to ensure authenticity.
           </p>
         </div>

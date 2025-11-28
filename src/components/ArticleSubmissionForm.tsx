@@ -74,6 +74,7 @@ export const ArticleSubmissionForm = () => {
       if (verifyError) throw verifyError;
 
       // Step 2: Upload to IPFS via edge function
+      const doi = `10.KRUMPVERSE/article.${new Date().getFullYear()}.${Date.now()}`;
       const { data: ipfsData, error: ipfsError } = await supabase.functions.invoke('upload-to-ipfs', {
         body: {
           title: data.title,
@@ -82,6 +83,7 @@ export const ArticleSubmissionForm = () => {
           keywords: data.keywords.split(',').map(k => k.trim()),
           publicationType: data.publicationType,
           license: data.license,
+          doi,
           author: {
             orcid: data.orcidId,
             name: data.authorName,
@@ -92,7 +94,6 @@ export const ArticleSubmissionForm = () => {
       if (ipfsError) throw ipfsError;
 
       // Step 3: Create article record
-      const doi = `10.KRUMP/${Date.now()}`;
       const { data: article, error: articleError } = await supabase
         .from('articles')
         .insert({
@@ -121,7 +122,7 @@ export const ArticleSubmissionForm = () => {
         author_order: 1,
       });
 
-      // Step 5: Mint to Story Protocol via edge function
+      // Step 5: Mint to Story via edge function
       const { data: mintData, error: mintError } = await supabase.functions.invoke('mint-to-story', {
         body: {
           articleId: article.id,

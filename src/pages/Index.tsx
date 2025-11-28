@@ -29,7 +29,7 @@ const Index = () => {
             </h2>
             <p className="text-lg md:text-xl text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed">
               Publish, archive, and discover academic research on Krump culture. 
-              Permanently stored on Story Protocol blockchain.
+              Permanently stored on Story blockchain.
             </p>
           </div>
 
@@ -61,7 +61,7 @@ const Index = () => {
               </div>
               <h3 className="font-semibold text-lg">Immutable Archive</h3>
               <p className="text-sm text-muted-foreground">
-                Research permanently stored on Story Protocol testnet with IPFS
+                Research permanently stored on Story testnet with IPFS
               </p>
             </div>
 
@@ -93,7 +93,7 @@ const Index = () => {
           >
             <p className="text-xs text-muted-foreground/60 mb-4">Powered by</p>
             <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground/80">
-              <span>Story Protocol</span>
+              <span>Story</span>
               <span>•</span>
               <span>IPFS (Pinata)</span>
               <span>•</span>

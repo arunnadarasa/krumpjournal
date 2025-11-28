@@ -1,7 +1,7 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import { Chain } from 'viem';
 
-// Story Protocol Testnet (Aeneid)
+// Story Testnet (Aeneid)
 export const storyTestnet: Chain = {
   id: 1315,
   name: 'Story Testnet (Aeneid)',
@@ -16,7 +16,7 @@ export const storyTestnet: Chain = {
   testnet: true,
 };
 
-// Story Protocol Mainnet
+// Story Mainnet
 export const storyMainnet: Chain = {
   id: 1514,
   name: 'Story Mainnet',
