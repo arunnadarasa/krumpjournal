@@ -18,9 +18,19 @@ serve(async (req) => {
     );
 
     const body = await req.json();
-    const { articleId, ipfsHash, metadata } = body;
+    const { 
+      articleId, 
+      ipaMetadataUri, 
+      ipaMetadataHash, 
+      nftMetadataUri, 
+      nftMetadataHash 
+    } = body;
 
     console.log('Starting Story minting for article:', articleId);
+    console.log('IPA Metadata URI:', ipaMetadataUri);
+    console.log('IPA Metadata Hash:', ipaMetadataHash);
+    console.log('NFT Metadata URI:', nftMetadataUri);
+    console.log('NFT Metadata Hash:', nftMetadataHash);
 
     // Update article status to minting
     await supabaseClient
@@ -28,12 +38,16 @@ serve(async (req) => {
       .update({ status: 'minting' })
       .eq('id', articleId);
 
-    // Note: Actual Story minting would happen here
-    // For now, we'll simulate the minting process
-    // In production, you would:
-    // 1. Use viem to connect to Story Protocol
-    // 2. Call the SPG contract's mint function
-    // 3. Wait for transaction confirmation
+    // Note: Actual Story minting would happen here using Story Protocol SDK
+    // const response = await client.ipAsset.mintAndRegisterIp({
+    //   spgNftContract: SPG_NFT_CONTRACT,
+    //   ipMetadata: {
+    //     ipMetadataURI: ipaMetadataUri,
+    //     ipMetadataHash: ipaMetadataHash,
+    //     nftMetadataURI: nftMetadataUri,
+    //     nftMetadataHash: nftMetadataHash,
+    //   },
+    // });
     
     // Simulated transaction data
     const simulatedTxHash = `0x${Date.now().toString(16)}${Math.random().toString(16).slice(2)}`;

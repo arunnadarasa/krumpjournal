@@ -53,16 +53,21 @@ export type Database = {
         Row: {
           abstract: string
           author_id: string
+          cover_image_ipfs: string | null
           created_at: string | null
           doi: string | null
           id: string
           ip_asset_id: string | null
+          ipa_metadata_hash: string | null
+          ipa_metadata_uri: string | null
           ipfs_gateway_url: string
           ipfs_hash: string
           keywords: string[] | null
           license: string | null
           minted_at: string | null
           network: Database["public"]["Enums"]["network_type"]
+          nft_metadata_hash: string | null
+          nft_metadata_uri: string | null
           publication_type: Database["public"]["Enums"]["publication_type"]
           spg_contract_address: string | null
           status: string | null
@@ -74,16 +79,21 @@ export type Database = {
         Insert: {
           abstract: string
           author_id: string
+          cover_image_ipfs?: string | null
           created_at?: string | null
           doi?: string | null
           id?: string
           ip_asset_id?: string | null
+          ipa_metadata_hash?: string | null
+          ipa_metadata_uri?: string | null
           ipfs_gateway_url: string
           ipfs_hash: string
           keywords?: string[] | null
           license?: string | null
           minted_at?: string | null
           network?: Database["public"]["Enums"]["network_type"]
+          nft_metadata_hash?: string | null
+          nft_metadata_uri?: string | null
           publication_type: Database["public"]["Enums"]["publication_type"]
           spg_contract_address?: string | null
           status?: string | null
@@ -95,16 +105,21 @@ export type Database = {
         Update: {
           abstract?: string
           author_id?: string
+          cover_image_ipfs?: string | null
           created_at?: string | null
           doi?: string | null
           id?: string
           ip_asset_id?: string | null
+          ipa_metadata_hash?: string | null
+          ipa_metadata_uri?: string | null
           ipfs_gateway_url?: string
           ipfs_hash?: string
           keywords?: string[] | null
           license?: string | null
           minted_at?: string | null
           network?: Database["public"]["Enums"]["network_type"]
+          nft_metadata_hash?: string | null
+          nft_metadata_uri?: string | null
           publication_type?: Database["public"]["Enums"]["publication_type"]
           spg_contract_address?: string | null
           status?: string | null
