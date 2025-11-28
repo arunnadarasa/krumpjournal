@@ -1,7 +1,7 @@
 export const ORCID_CONFIG = {
   clientId: import.meta.env.VITE_ORCID_CLIENT_ID,
   authUrl: 'https://orcid.org/oauth/authorize',
-  scopes: '/read-limited /activities/read-limited',
+  scopes: '/authenticate',
   redirectUri: `${window.location.origin}/orcid/callback`,
 };
 
