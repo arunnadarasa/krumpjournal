@@ -563,7 +563,7 @@ export default function Compose() {
           publication_type: publicationType,
           license,
           network,
-          author_id: profile?.id || user.id,
+          author_id: user.id,
           status: 'published',
           minted_at: new Date().toISOString(),
         })
