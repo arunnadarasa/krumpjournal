@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { CoverImageUpload } from '@/components/CoverImageUpload';
+import { PDFUpload } from '@/components/PDFUpload';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -214,6 +215,14 @@ export const ArticleSubmissionForm = () => {
             )}
           />
 
+          <PDFUpload
+            onPDFExtract={(text) => {
+              form.setValue('content', text);
+              toast.success('PDF content extracted and populated!');
+            }}
+            disabled={isSubmitting}
+          />
+
           <FormField
             control={form.control}
             name="content"
@@ -222,22 +231,13 @@ export const ArticleSubmissionForm = () => {
                 <FormLabel>Full Article Content</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Enter full article content"
+                    placeholder="Enter full article content or upload PDF above"
                     className="min-h-[300px]"
                     {...field}
                   />
                 </FormControl>
                 <FormDescription>
-                  Minimum 100 characters. For best results, format your article using{' '}
-                  <a 
-                    href="https://www.overleaf.com/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    Overleaf
-                  </a>{' '}
-                  and paste your content here.
+                  Minimum 100 characters. Upload a PDF above or manually enter your content.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
