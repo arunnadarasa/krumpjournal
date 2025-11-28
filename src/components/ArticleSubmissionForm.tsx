@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { CoverImageUpload } from '@/components/CoverImageUpload';
 import { PDFUpload } from '@/components/PDFUpload';
+import { Badge } from '@/components/ui/badge';
+import { CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -30,7 +32,7 @@ const articleSchema = z.object({
 type ArticleFormData = z.infer<typeof articleSchema>;
 
 export const ArticleSubmissionForm = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, profile } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [worldIdVerified, setWorldIdVerified] = useState(false);
   const [worldIdProof, setWorldIdProof] = useState<any>(null);
@@ -41,8 +43,18 @@ export const ArticleSubmissionForm = () => {
     resolver: zodResolver(articleSchema),
     defaultValues: {
       license: 'CC BY 4.0',
+      authorName: profile?.orcid_name || '',
+      orcidId: profile?.orcid_id || '',
     },
   });
+
+  // Auto-populate ORCID fields when profile loads
+  useEffect(() => {
+    if (profile?.orcid_verified && profile.orcid_id && profile.orcid_name) {
+      form.setValue('orcidId', profile.orcid_id);
+      form.setValue('authorName', profile.orcid_name);
+    }
+  }, [profile, form]);
 
   const onWorldIdSuccess = (proof: any) => {
     console.log('World ID verification successful:', proof);
@@ -250,9 +262,21 @@ export const ArticleSubmissionForm = () => {
               name="authorName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Author Name</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    Author Name
+                    {profile?.orcid_verified && (
+                      <Badge variant="secondary" className="bg-accent/10 text-accent-foreground text-xs">
+                        <CheckCircle2 className="w-3 h-3 mr-1" />
+                        Verified
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Full name" {...field} />
+                    <Input 
+                      placeholder="Full name" 
+                      {...field}
+                      disabled={profile?.orcid_verified}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -264,11 +288,27 @@ export const ArticleSubmissionForm = () => {
               name="orcidId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>ORCID iD</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    ORCID iD
+                    {profile?.orcid_verified && (
+                      <Badge variant="secondary" className="bg-accent/10 text-accent-foreground text-xs">
+                        <CheckCircle2 className="w-3 h-3 mr-1" />
+                        Verified
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="0000-0000-0000-0000" {...field} />
+                    <Input 
+                      placeholder="0000-0000-0000-0000" 
+                      {...field}
+                      disabled={profile?.orcid_verified}
+                    />
                   </FormControl>
-                  <FormDescription>Format: 0000-0000-0000-0000</FormDescription>
+                  <FormDescription>
+                    {profile?.orcid_verified 
+                      ? 'Verified via ORCID OAuth' 
+                      : 'Format: 0000-0000-0000-0000'}
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
