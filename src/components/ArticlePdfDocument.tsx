@@ -87,12 +87,12 @@ export const ArticlePdfDocument: React.FC<ArticlePdfDocumentProps> = ({
     h1: { fontSize: 16, fontWeight: 'bold', marginTop: 20, marginBottom: 10 },
     h2: { fontSize: 14, fontWeight: 'bold', marginTop: 18, marginBottom: 8 },
     h3: { fontSize: 12, fontWeight: 'bold', marginTop: 15, marginBottom: 6 },
-    p: { marginBottom: 10, textAlign: 'justify' },
+    p: { fontSize: 11, marginBottom: 10, textAlign: 'justify', lineHeight: 1.6 },
     strong: { fontWeight: 'bold' },
     em: { fontStyle: 'italic' },
-    ul: { marginLeft: 20, marginBottom: 10 },
-    ol: { marginLeft: 20, marginBottom: 10 },
-    li: { marginBottom: 4 },
+    ul: { fontSize: 11, marginLeft: 15, marginBottom: 10, paddingLeft: 5 },
+    ol: { fontSize: 11, marginLeft: 15, marginBottom: 10, paddingLeft: 5 },
+    li: { fontSize: 11, marginBottom: 4, paddingLeft: 5 },
   };
 
   return (
