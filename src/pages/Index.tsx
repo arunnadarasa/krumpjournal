@@ -1,32 +1,112 @@
+import { Link } from 'react-router-dom';
+import { WalletConnect } from '@/components/WalletConnect';
+import { Button } from '@/components/ui/button';
+import { BookOpen, Upload, Search } from 'lucide-react';
+
 const Index = () => {
   return (
-    <main className="grain-texture relative min-h-screen flex items-center justify-center px-6 py-12" style={{ background: 'var(--gradient-subtle)' }}>
-      <div className="max-w-4xl w-full space-y-8 text-center">
-        {/* Main content */}
-        <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0.1s', opacity: 0 }}>
-          <h1 className="text-7xl md:text-8xl lg:text-9xl tracking-tight text-foreground">
-            Blank
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground font-light max-w-xl mx-auto leading-relaxed">
-            A minimal space. Pure possibility.
-          </p>
+    <div className="grain-texture min-h-screen" style={{ background: 'var(--gradient-subtle)' }}>
+      <header className="border-b border-border/40 backdrop-blur-sm">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-6 w-6 text-accent" />
+              <h1 className="text-xl font-semibold">KrumpVerse Journal</h1>
+            </div>
+            <WalletConnect />
+          </div>
         </div>
+      </header>
 
-        {/* Accent line */}
-        <div 
-          className="h-px w-24 mx-auto bg-accent animate-fade-in-slow" 
-          style={{ animationDelay: '0.6s', opacity: 0 }}
-        />
+      <main className="container mx-auto px-6 py-20">
+        <div className="max-w-4xl mx-auto text-center space-y-12">
+          {/* Hero */}
+          <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0.1s', opacity: 0 }}>
+            <h2 className="text-6xl md:text-7xl lg:text-8xl tracking-tight text-foreground">
+              Decentralized
+              <br />
+              <span className="text-accent">Krump Research</span>
+            </h2>
+            <p className="text-lg md:text-xl text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed">
+              Publish, archive, and discover academic research on Krump culture. 
+              Permanently stored on Story Protocol blockchain.
+            </p>
+          </div>
 
-        {/* Subtext */}
-        <p 
-          className="text-sm text-muted-foreground/60 font-light animate-fade-in" 
-          style={{ animationDelay: '0.8s', opacity: 0 }}
-        >
-          Begin anywhere
-        </p>
-      </div>
-    </main>
+          {/* CTA Buttons */}
+          <div 
+            className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in"
+            style={{ animationDelay: '0.4s', opacity: 0 }}
+          >
+            <Link to="/submit">
+              <Button size="lg" className="w-full sm:w-auto gap-2">
+                <Upload className="h-4 w-4" />
+                Submit Research
+              </Button>
+            </Link>
+            <Button size="lg" variant="outline" className="w-full sm:w-auto gap-2">
+              <Search className="h-4 w-4" />
+              Browse Articles
+            </Button>
+          </div>
+
+          {/* Features */}
+          <div 
+            className="grid md:grid-cols-3 gap-8 pt-12 animate-fade-in"
+            style={{ animationDelay: '0.6s', opacity: 0 }}
+          >
+            <div className="space-y-3">
+              <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
+                <BookOpen className="h-6 w-6 text-accent" />
+              </div>
+              <h3 className="font-semibold text-lg">Immutable Archive</h3>
+              <p className="text-sm text-muted-foreground">
+                Research permanently stored on Story Protocol testnet with IPFS
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
+                <Upload className="h-6 w-6 text-accent" />
+              </div>
+              <h3 className="font-semibold text-lg">ORCID Verified</h3>
+              <p className="text-sm text-muted-foreground">
+                Connect your ORCID iD for authenticated authorship attribution
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
+                <Search className="h-6 w-6 text-accent" />
+              </div>
+              <h3 className="font-semibold text-lg">Human Verified</h3>
+              <p className="text-sm text-muted-foreground">
+                World ID verification ensures authentic contributions from real researchers
+              </p>
+            </div>
+          </div>
+
+          {/* Tech Stack */}
+          <div 
+            className="pt-12 border-t border-border/40 animate-fade-in"
+            style={{ animationDelay: '0.8s', opacity: 0 }}
+          >
+            <p className="text-xs text-muted-foreground/60 mb-4">Powered by</p>
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground/80">
+              <span>Story Protocol</span>
+              <span>•</span>
+              <span>IPFS (Pinata)</span>
+              <span>•</span>
+              <span>World ID</span>
+              <span>•</span>
+              <span>ORCID</span>
+              <span>•</span>
+              <span>MetaMask</span>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 };
 

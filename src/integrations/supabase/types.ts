@@ -14,7 +14,180 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      article_authors: {
+        Row: {
+          article_id: string
+          author_name: string
+          author_order: number
+          created_at: string | null
+          id: string
+          orcid_id: string
+        }
+        Insert: {
+          article_id: string
+          author_name: string
+          author_order: number
+          created_at?: string | null
+          id?: string
+          orcid_id: string
+        }
+        Update: {
+          article_id?: string
+          author_name?: string
+          author_order?: number
+          created_at?: string | null
+          id?: string
+          orcid_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_authors_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      articles: {
+        Row: {
+          abstract: string
+          author_id: string
+          created_at: string | null
+          doi: string | null
+          id: string
+          ip_asset_id: string | null
+          ipfs_gateway_url: string
+          ipfs_hash: string
+          keywords: string[] | null
+          license: string | null
+          minted_at: string | null
+          network: Database["public"]["Enums"]["network_type"]
+          publication_type: Database["public"]["Enums"]["publication_type"]
+          spg_contract_address: string | null
+          status: string | null
+          submitted_at: string | null
+          title: string
+          transaction_hash: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          abstract: string
+          author_id: string
+          created_at?: string | null
+          doi?: string | null
+          id?: string
+          ip_asset_id?: string | null
+          ipfs_gateway_url: string
+          ipfs_hash: string
+          keywords?: string[] | null
+          license?: string | null
+          minted_at?: string | null
+          network?: Database["public"]["Enums"]["network_type"]
+          publication_type: Database["public"]["Enums"]["publication_type"]
+          spg_contract_address?: string | null
+          status?: string | null
+          submitted_at?: string | null
+          title: string
+          transaction_hash?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          abstract?: string
+          author_id?: string
+          created_at?: string | null
+          doi?: string | null
+          id?: string
+          ip_asset_id?: string | null
+          ipfs_gateway_url?: string
+          ipfs_hash?: string
+          keywords?: string[] | null
+          license?: string | null
+          minted_at?: string | null
+          network?: Database["public"]["Enums"]["network_type"]
+          publication_type?: Database["public"]["Enums"]["publication_type"]
+          spg_contract_address?: string | null
+          status?: string | null
+          submitted_at?: string | null
+          title?: string
+          transaction_hash?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "articles_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          id: string
+          orcid_id: string | null
+          orcid_name: string | null
+          orcid_verified: boolean | null
+          updated_at: string | null
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string | null
+          id: string
+          orcid_id?: string | null
+          orcid_name?: string | null
+          orcid_verified?: boolean | null
+          updated_at?: string | null
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          orcid_id?: string | null
+          orcid_name?: string | null
+          orcid_verified?: boolean | null
+          updated_at?: string | null
+          wallet_address?: string
+        }
+        Relationships: []
+      }
+      world_id_verifications: {
+        Row: {
+          id: string
+          merkle_root: string
+          nullifier_hash: string
+          proof: string
+          user_id: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          id?: string
+          merkle_root: string
+          nullifier_hash: string
+          proof: string
+          user_id?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          id?: string
+          merkle_root?: string
+          nullifier_hash?: string
+          proof?: string
+          user_id?: string | null
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "world_id_verifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +196,12 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      network_type: "testnet" | "mainnet"
+      publication_type:
+        | "research_article"
+        | "review"
+        | "perspective"
+        | "preprint"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +328,14 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      network_type: ["testnet", "mainnet"],
+      publication_type: [
+        "research_article",
+        "review",
+        "perspective",
+        "preprint",
+      ],
+    },
   },
 } as const
