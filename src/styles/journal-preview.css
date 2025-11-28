@@ -73,6 +73,28 @@
   text-align: justify;
 }
 
+.journal-content strong,
+.journal-content b {
+  font-weight: 700;
+}
+
+.journal-content em,
+.journal-content i {
+  font-style: italic;
+}
+
+.journal-content u {
+  text-decoration: underline;
+}
+
+.journal-content strong em,
+.journal-content em strong,
+.journal-content b i,
+.journal-content i b {
+  font-weight: 700;
+  font-style: italic;
+}
+
 .journal-content ul,
 .journal-content ol {
   margin: 1rem 0;
