@@ -8,3 +8,9 @@ verify_jwt = true
 
 [functions.mint-to-story]
 verify_jwt = true
+
+[functions.generate-cover-image]
+verify_jwt = false
+
+[functions.extract-pdf-text]
+verify_jwt = false

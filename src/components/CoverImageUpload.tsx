@@ -47,9 +47,44 @@ export const CoverImageUpload = ({ onImageSelect, disabled }: CoverImageUploadPr
     }
   };
 
-  const handleGenerateClick = () => {
-    toast.info('AI cover generation coming soon!');
-    setIsGenerating(false);
+  const handleGenerateClick = async () => {
+    setIsGenerating(true);
+    
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-cover-image`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            prompt: 'scientific research article, abstract visualization, modern academic design'
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to generate image');
+      }
+
+      const { imageUrl } = await response.json();
+      
+      // Convert base64 to File object
+      const base64Response = await fetch(imageUrl);
+      const blob = await base64Response.blob();
+      const file = new File([blob], 'ai-generated-cover.png', { type: 'image/png' });
+      
+      setPreview(imageUrl);
+      onImageSelect(file, imageUrl);
+      toast.success('Cover image generated successfully!');
+    } catch (error) {
+      console.error('Image generation error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to generate image');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -108,7 +143,7 @@ export const CoverImageUpload = ({ onImageSelect, disabled }: CoverImageUploadPr
                 Generating...
               </>
             ) : (
-              'Generate with AI (Coming Soon)'
+              'Generate with AI'
             )}
           </Button>
         </div>
