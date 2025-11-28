@@ -10,6 +10,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import Index from "./pages/Index";
 import Submit from "./pages/Submit";
 import Compose from "./pages/Compose";
+import Browse from "./pages/Browse";
 import OrcidCallback from "./pages/OrcidCallback";
 import NotFound from "./pages/NotFound";
 import '@rainbow-me/rainbowkit/styles.css';
@@ -29,6 +30,7 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/submit" element={<Submit />} />
                 <Route path="/compose" element={<Compose />} />
+                <Route path="/browse" element={<Browse />} />
                 <Route path="/orcid/callback" element={<OrcidCallback />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
