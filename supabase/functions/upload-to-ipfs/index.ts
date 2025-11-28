@@ -17,14 +17,15 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { title, abstract, content, keywords, publicationType, license, author } = body;
+    const { title, abstract, content, keywords, publicationType, license, doi, author } = body;
 
-    // Construct IP metadata for Story Protocol
+    // Construct IP metadata for Story
     const metadata = {
       name: title,
       description: abstract,
       content,
       attributes: [
+        { trait_type: 'DOI', value: doi },
         { trait_type: 'Type', value: publicationType },
         { trait_type: 'Creator', value: `${author.name} (ORCID: ${author.orcid})` },
         { trait_type: 'Network', value: 'Story Testnet' },
@@ -33,6 +34,7 @@ serve(async (req) => {
       ],
       keywords,
       author,
+      doi,
     };
 
     console.log('Uploading metadata to IPFS:', metadata);
@@ -68,6 +70,7 @@ serve(async (req) => {
         ipfsHash,
         gatewayUrl,
         ipfsUri: `ipfs://${ipfsHash}`,
+        doiUrl: `https://doi.org/${doi}`,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
