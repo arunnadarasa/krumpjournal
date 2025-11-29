@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, Search, ArrowLeft, ExternalLink } from 'lucide-react';
+import { BookOpen, Search, ArrowLeft, ExternalLink, ShieldCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Article {
@@ -27,6 +27,7 @@ interface Article {
   doi: string | null;
   zenodo_doi: string | null;
   wallet_address: string | null;
+  world_id_verified: boolean | null;
   authors: {
     author_name: string;
     orcid_id: string;
@@ -74,6 +75,7 @@ const Browse = () => {
           doi,
           zenodo_doi,
           wallet_address,
+          world_id_verified,
           article_authors (
             author_name,
             orcid_id,
@@ -215,6 +217,15 @@ const Browse = () => {
                         >
                           {article.network === 'mainnet' ? '🟢 Mainnet' : '🟡 Testnet'}
                         </Badge>
+                        {article.world_id_verified && (
+                          <Badge 
+                            variant="secondary"
+                            className="bg-blue-500/20 text-blue-700 border-blue-500"
+                          >
+                            <ShieldCheck className="w-3 h-3 mr-1" />
+                            Verified
+                          </Badge>
+                        )}
                         {article.doi && (
                           <Badge variant="secondary">DOI</Badge>
                         )}
