@@ -74,7 +74,7 @@ export const IPALinkDialog = ({
         .from('articles')
         .update({ ip_asset_id: ipAssetId })
         .eq('id', articleId)
-        .eq('wallet_address', walletAddress.toLowerCase())
+        .ilike('wallet_address', walletAddress)
         .select();
 
       if (error) throw error;
