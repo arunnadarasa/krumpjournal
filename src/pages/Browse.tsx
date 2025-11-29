@@ -241,21 +241,37 @@ const Browse = () => {
                       <p className="text-xs text-muted-foreground">
                         Published {formatDate(article.submitted_at || article.created_at)}
                       </p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="gap-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const pdfUrl = article.pdf_ipfs_hash
-                            ? `https://gateway.pinata.cloud/ipfs/${article.pdf_ipfs_hash}`
-                            : article.ipfs_gateway_url;
-                          window.open(pdfUrl, '_blank');
-                        }}
-                      >
-                        View PDF
-                        <ExternalLink className="h-3 w-3" />
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        {article.zenodo_doi && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.open(`https://doi.org/${article.zenodo_doi}`, '_blank');
+                            }}
+                          >
+                            View on Zenodo
+                            <ExternalLink className="h-3 w-3" />
+                          </Button>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const pdfUrl = article.pdf_ipfs_hash
+                              ? `https://gateway.pinata.cloud/ipfs/${article.pdf_ipfs_hash}`
+                              : article.ipfs_gateway_url;
+                            window.open(pdfUrl, '_blank');
+                          }}
+                        >
+                          View PDF
+                          <ExternalLink className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

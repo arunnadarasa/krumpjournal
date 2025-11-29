@@ -18,6 +18,7 @@ interface IPALinkDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   articleId: string;
+  walletAddress: string;
   onSuccess: () => void;
 }
 
@@ -25,6 +26,7 @@ export const IPALinkDialog = ({
   open,
   onOpenChange,
   articleId,
+  walletAddress,
   onSuccess,
 }: IPALinkDialogProps) => {
   const [ipaInput, setIpaInput] = useState('');
@@ -68,12 +70,18 @@ export const IPALinkDialog = ({
 
     setLoading(true);
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('articles')
         .update({ ip_asset_id: ipAssetId })
-        .eq('id', articleId);
+        .eq('id', articleId)
+        .eq('wallet_address', walletAddress.toLowerCase())
+        .select();
 
       if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error('Update failed - you may not own this article');
+      }
 
       toast({
         title: 'Success',
