@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, Link as LinkIcon } from 'lucide-react';
+import { ExternalLink, Link as LinkIcon, ShieldCheck } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
@@ -34,6 +34,7 @@ interface ArticleDetailModalProps {
     transaction_hash: string | null;
     network: string;
     wallet_address: string | null;
+    world_id_verified: boolean | null;
     authors: Author[];
   } | null;
   isOwner: boolean;
@@ -130,6 +131,17 @@ export const ArticleDetailModal = ({
                 <span className="text-muted-foreground">Published:</span>
                 <span className="ml-2">{formatDate(article.submitted_at)}</span>
               </div>
+              {article.world_id_verified && (
+                <div className="flex items-center">
+                  <Badge 
+                    variant="secondary"
+                    className="bg-blue-500/20 text-blue-700 border-blue-500"
+                  >
+                    <ShieldCheck className="w-3 h-3 mr-1" />
+                    World ID Verified
+                  </Badge>
+                </div>
+              )}
               {article.doi && (
                 <div>
                   <span className="text-muted-foreground">DOI:</span>

@@ -145,6 +145,7 @@ export const ArticleSubmissionForm = () => {
           doi: metadataResult.doi,
           network: 'testnet',
           status: 'pending',
+          world_id_verified: worldIdVerified,
         })
         .select()
         .single();
