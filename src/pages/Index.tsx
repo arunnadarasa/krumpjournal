@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom';
 import { WalletConnect } from '@/components/WalletConnect';
 import { NetworkToggle } from '@/components/NetworkToggle';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Upload, Search, PenTool } from 'lucide-react';
+import { BookOpen, Upload, Search, PenTool, ExternalLink, Link as LinkIcon, CheckCircle } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 const Index = () => {
   return <div className="grain-texture min-h-screen" style={{
     background: 'var(--gradient-subtle)'
@@ -98,6 +99,96 @@ const Index = () => {
               <p className="text-sm text-muted-foreground">
                 World ID verification ensures authentic contributions from real researchers
               </p>
+            </div>
+          </div>
+
+          {/* ORCID Integration Guide */}
+          <div className="pt-16 animate-fade-in" style={{
+          animationDelay: '1s',
+          opacity: 0
+        }}>
+            <div className="bg-card/50 rounded-2xl border border-border/40 p-6 md:p-8">
+              <div className="text-center mb-6">
+                <h3 className="text-2xl md:text-3xl font-semibold mb-2">Add Your Article to ORCID</h3>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  After publishing to Zenodo, link your article to your ORCID profile for proper attribution
+                </p>
+              </div>
+              
+              <Accordion type="single" collapsible className="space-y-2">
+                <AccordionItem value="step-1" className="border border-border/40 rounded-lg px-4 bg-background/50">
+                  <AccordionTrigger className="hover:no-underline">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-accent font-semibold">1</span>
+                      </div>
+                      <span className="font-semibold text-left">Link Zenodo with your ORCID</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="pt-4 pb-4 pl-11 text-sm text-muted-foreground space-y-2">
+                    <ul className="list-disc pl-5 space-y-2">
+                      <li>Log in to Zenodo and open your profile (click your name/email in the top-right)</li>
+                      <li>Navigate to "Linked accounts" section</li>
+                      <li>Next to ORCID, click "Connect" and sign in with your ORCID credentials to authorize Zenodo</li>
+                      <li>After this, your future Zenodo uploads will include your ORCID iD automatically in the record metadata</li>
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="step-2" className="border border-border/40 rounded-lg px-4 bg-background/50">
+                  <AccordionTrigger className="hover:no-underline">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-accent font-semibold">2</span>
+                      </div>
+                      <span className="font-semibold text-left">Add ORCID iD to your Zenodo record</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="pt-4 pb-4 pl-11 text-sm text-muted-foreground space-y-2">
+                    <ul className="list-disc pl-5 space-y-2">
+                      <li>Open your article's record on Zenodo and click "Edit" (if you have edit permissions)</li>
+                      <li>In the "Creators/Authors" section, ensure your name appears with your ORCID iD attached</li>
+                      <li>Use the search box or field provided to add your ORCID iD if it's not already there</li>
+                      <li>Save/publish the updated record so the DOI metadata includes your ORCID iD</li>
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="step-3" className="border border-border/40 rounded-lg px-4 bg-background/50">
+                  <AccordionTrigger className="hover:no-underline">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-accent font-semibold">3</span>
+                      </div>
+                      <span className="font-semibold text-left">Add the article to your ORCID record</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="pt-4 pb-4 pl-11 text-sm text-muted-foreground space-y-2">
+                    <ul className="list-disc pl-5 space-y-2">
+                      <li>Log in to your ORCID account and scroll to the "Works" section</li>
+                      <li>Click "+ Add" → "Add DOI" (or similar option)</li>
+                      <li>Paste the article's DOI from Zenodo and let ORCID retrieve the details automatically</li>
+                      <li>Check the pre-filled fields, adjust anything needed, choose visibility settings</li>
+                      <li>Save, and the article will appear under "Works" on your ORCID profile</li>
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+
+              <div className="flex flex-col sm:flex-row gap-3 mt-6 justify-center">
+                <Button asChild variant="outline" size="lg" className="gap-2">
+                  <a href="https://zenodo.org" target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4" />
+                    Open Zenodo
+                  </a>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="gap-2">
+                  <a href="https://orcid.org" target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4" />
+                    Open ORCID
+                  </a>
+                </Button>
+              </div>
             </div>
           </div>
 
