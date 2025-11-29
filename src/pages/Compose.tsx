@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Send, Loader2, CheckCircle, FileText, Image as ImageIcon, Upload, Coins, Download } from 'lucide-react';
 import { pdf } from '@react-pdf/renderer';
-import { useWalletClient } from 'wagmi';
+import { useWalletClient, useChainId } from 'wagmi';
 import { StoryClient, StoryConfig } from '@story-protocol/core-sdk';
 import { custom, toHex } from 'viem';
 import { ArticlePdfDocument } from '@/components/ArticlePdfDocument';
@@ -22,18 +22,20 @@ import { ArticlePreview } from '@/components/editor/ArticlePreview';
 import { SubmissionSuccess } from '@/components/SubmissionSuccess';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { getStoryConfig, SPG_CONTRACTS } from '@/lib/storyConfig';
+import { NetworkToggle } from '@/components/NetworkToggle';
 
 export default function Compose() {
   const navigate = useNavigate();
   const { user, profile, walletAddress } = useAuth();
   const { data: walletClient } = useWalletClient();
+  const chainId = useChainId();
+  const network = chainId === 1514 ? 'mainnet' : 'testnet';
   const [title, setTitle] = useState('');
   const [abstract, setAbstract] = useState('');
   const [content, setContent] = useState('');
   const [keywords, setKeywords] = useState('');
   const [publicationType, setPublicationType] = useState<'research_article' | 'review' | 'perspective' | 'preprint'>('research_article');
   const [license, setLicense] = useState('CC BY 4.0');
-  const [network, setNetwork] = useState<'testnet' | 'mainnet'>('testnet');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [draftId, setDraftId] = useState<string | null>(null);
@@ -108,7 +110,7 @@ export default function Compose() {
 
     const interval = setInterval(saveDraft, 30000);
     return () => clearInterval(interval);
-  }, [user, title, content, abstract, keywords, publicationType, license, network, draftId]);
+  }, [user, title, content, abstract, keywords, publicationType, license, network, draftId, chainId]);
 
   // Helper: Generate HTML article content
   const generateArticleHtml = () => {
@@ -483,10 +485,21 @@ export default function Compose() {
       return;
     }
 
+    // Validate chain
+    if (!walletClient.chain?.id) {
+      toast.error('Wallet not connected to any network');
+      return;
+    }
+
+    if (![1315, 1514].includes(walletClient.chain.id)) {
+      toast.error('Please switch to Story Testnet or Mainnet');
+      return;
+    }
+
     setIsMinting(true);
     try {
       // Create Story client with user's wallet
-      const chainId = walletClient.chain?.id || 1315;
+      const chainId = walletClient.chain.id;
       const storyConfig = getStoryConfig(chainId);
       
       const config: StoryConfig = {
@@ -654,6 +667,7 @@ export default function Compose() {
                     Saving draft...
                   </span>
                 )}
+                <NetworkToggle />
                 <OrcidLink />
                 <WalletConnect />
               </div>
@@ -694,34 +708,19 @@ export default function Compose() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="type">Publication Type</Label>
-                    <Select value={publicationType} onValueChange={(value: any) => setPublicationType(value)}>
-                      <SelectTrigger id="type">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="research_article">Research Article</SelectItem>
-                        <SelectItem value="review">Review</SelectItem>
-                        <SelectItem value="perspective">Perspective</SelectItem>
-                        <SelectItem value="preprint">Preprint</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="network">Network</Label>
-                    <Select value={network} onValueChange={(value: any) => setNetwork(value)}>
-                      <SelectTrigger id="network">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="testnet">Testnet</SelectItem>
-                        <SelectItem value="mainnet">Mainnet</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="type">Publication Type</Label>
+                  <Select value={publicationType} onValueChange={(value: any) => setPublicationType(value)}>
+                    <SelectTrigger id="type">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="research_article">Research Article</SelectItem>
+                      <SelectItem value="review">Review</SelectItem>
+                      <SelectItem value="perspective">Perspective</SelectItem>
+                      <SelectItem value="preprint">Preprint</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
@@ -761,7 +760,14 @@ export default function Compose() {
 
               {/* Publishing Steps */}
               <Card className="p-6 space-y-4">
-                <h3 className="font-semibold text-lg">Publishing Steps</h3>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-semibold text-lg">Publishing Steps</h3>
+                  <div className="text-sm text-muted-foreground">
+                    Network: <span className="font-medium">
+                      {chainId === 1514 ? '🟢 Story Mainnet' : '🟡 Story Testnet'}
+                    </span>
+                  </div>
+                </div>
                 
                 {/* Step 1: Generate Article */}
                 <div className="flex items-center gap-3">
