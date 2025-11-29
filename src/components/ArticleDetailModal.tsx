@@ -78,12 +78,12 @@ export const ArticleDetailModal = ({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] sm:max-w-3xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold pr-8">{article.title}</DialogTitle>
+            <DialogTitle className="text-xl sm:text-2xl font-bold pr-8">{article.title}</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Authors */}
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground mb-2">Authors</h3>
@@ -126,7 +126,7 @@ export const ArticleDetailModal = ({
             )}
 
             {/* Metadata */}
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2 sm:gap-4 text-sm">
               <div>
                 <span className="text-muted-foreground">Published:</span>
                 <span className="ml-2">{formatDate(article.submitted_at)}</span>
@@ -149,7 +149,7 @@ export const ArticleDetailModal = ({
                     href={`https://doi.org/${article.doi}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="ml-2 hover:underline inline-flex items-center gap-1"
+                    className="ml-2 hover:underline inline-flex items-center gap-1 break-all"
                   >
                     {article.doi}
                     <ExternalLink className="w-3 h-3" />
@@ -159,11 +159,12 @@ export const ArticleDetailModal = ({
             </div>
 
             {/* Actions */}
-            <div className="flex flex-wrap gap-3 pt-4 border-t">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3 pt-4 border-t">
               {canClaim && (
                 <Button
                   variant="default"
                   onClick={() => setClaimDialogOpen(true)}
+                  className="w-full sm:w-auto"
                 >
                   <LinkIcon className="w-4 h-4 mr-2" />
                   Claim Article
@@ -171,7 +172,7 @@ export const ArticleDetailModal = ({
               )}
 
               {article.zenodo_doi ? (
-                <Button asChild variant="outline">
+                <Button asChild variant="outline" className="w-full sm:w-auto">
                   <a
                     href={`https://doi.org/${article.zenodo_doi}`}
                     target="_blank"
@@ -186,6 +187,7 @@ export const ArticleDetailModal = ({
                   <Button
                     variant="outline"
                     onClick={() => setZenodoDialogOpen(true)}
+                    className="w-full sm:w-auto"
                   >
                     <LinkIcon className="w-4 h-4 mr-2" />
                     Link to Zenodo
@@ -194,7 +196,7 @@ export const ArticleDetailModal = ({
               )}
 
               {article.ip_asset_id ? (
-                <Button asChild variant="outline">
+                <Button asChild variant="outline" className="w-full sm:w-auto">
                   <a
                     href={getStoryExplorerUrl(article.network, article.ip_asset_id)}
                     target="_blank"
@@ -209,6 +211,7 @@ export const ArticleDetailModal = ({
                   <Button
                     variant="outline"
                     onClick={() => setIpaDialogOpen(true)}
+                    className="w-full sm:w-auto"
                   >
                     <LinkIcon className="w-4 h-4 mr-2" />
                     Link IPA
@@ -217,7 +220,7 @@ export const ArticleDetailModal = ({
               )}
 
               {article.transaction_hash ? (
-                <Button asChild variant="outline">
+                <Button asChild variant="outline" className="w-full sm:w-auto">
                   <a
                     href={getStoryScanUrl(article.network, article.transaction_hash)}
                     target="_blank"
@@ -232,6 +235,7 @@ export const ArticleDetailModal = ({
                   <Button
                     variant="outline"
                     onClick={() => setTxDialogOpen(true)}
+                    className="w-full sm:w-auto"
                   >
                     <LinkIcon className="w-4 h-4 mr-2" />
                     Link Transaction
@@ -239,7 +243,7 @@ export const ArticleDetailModal = ({
                 )
               )}
 
-              <Button asChild>
+              <Button asChild className="w-full sm:w-auto">
                 <a
                   href={
                     article.pdf_ipfs_hash
