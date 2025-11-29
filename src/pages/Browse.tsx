@@ -204,6 +204,15 @@ const Browse = () => {
                         </CardDescription>
                       </div>
                       <div className="flex gap-2">
+                        <Badge 
+                          variant={article.network === 'mainnet' ? 'default' : 'outline'}
+                          className={article.network === 'mainnet' 
+                            ? 'bg-green-600 hover:bg-green-700 text-white border-transparent' 
+                            : 'bg-yellow-600/20 text-yellow-700 border-yellow-600'
+                          }
+                        >
+                          {article.network === 'mainnet' ? '🟢 Mainnet' : '🟡 Testnet'}
+                        </Badge>
                         {article.doi && (
                           <Badge variant="secondary">DOI</Badge>
                         )}
