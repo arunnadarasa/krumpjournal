@@ -63,7 +63,7 @@ export const ZenodoLinkDialog = ({ open, onOpenChange, articleId, walletAddress,
         .from('articles')
         .update({ zenodo_doi: doi })
         .eq('id', articleId)
-        .eq('wallet_address', walletAddress.toLowerCase())
+        .ilike('wallet_address', walletAddress)
         .select();
 
       if (error) throw error;

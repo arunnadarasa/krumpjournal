@@ -74,7 +74,7 @@ export const TransactionLinkDialog = ({
         .from('articles')
         .update({ transaction_hash: txHash })
         .eq('id', articleId)
-        .eq('wallet_address', walletAddress.toLowerCase())
+        .ilike('wallet_address', walletAddress)
         .select();
 
       if (error) throw error;
