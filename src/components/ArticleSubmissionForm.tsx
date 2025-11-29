@@ -17,6 +17,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { WORLDCOIN_CONFIG } from '@/lib/worldcoin';
 import { Loader2 } from 'lucide-react';
+import { useAccount } from 'wagmi';
 
 const articleSchema = z.object({
   title: z.string().min(10, 'Title must be at least 10 characters').max(200),
@@ -33,6 +34,7 @@ type ArticleFormData = z.infer<typeof articleSchema>;
 
 export const ArticleSubmissionForm = () => {
   const { user, isAuthenticated, profile } = useAuth();
+  const { address } = useAccount();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [worldIdVerified, setWorldIdVerified] = useState(false);
   const [worldIdProof, setWorldIdProof] = useState<any>(null);
@@ -127,6 +129,7 @@ export const ArticleSubmissionForm = () => {
         .from('articles')
         .insert({
           author_id: user.id,
+          wallet_address: address?.toLowerCase() || null,
           title: data.title,
           abstract: data.abstract,
           keywords: data.keywords.split(',').map(k => k.trim()),

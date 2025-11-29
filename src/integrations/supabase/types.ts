@@ -106,6 +106,7 @@ export type Database = {
           title: string
           transaction_hash: string | null
           updated_at: string | null
+          wallet_address: string | null
           zenodo_doi: string | null
         }
         Insert: {
@@ -134,6 +135,7 @@ export type Database = {
           title: string
           transaction_hash?: string | null
           updated_at?: string | null
+          wallet_address?: string | null
           zenodo_doi?: string | null
         }
         Update: {
@@ -162,6 +164,7 @@ export type Database = {
           title?: string
           transaction_hash?: string | null
           updated_at?: string | null
+          wallet_address?: string | null
           zenodo_doi?: string | null
         }
         Relationships: []
