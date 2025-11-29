@@ -11,10 +11,11 @@ interface ZenodoLinkDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   articleId: string;
+  walletAddress: string;
   onSuccess: () => void;
 }
 
-export const ZenodoLinkDialog = ({ open, onOpenChange, articleId, onSuccess }: ZenodoLinkDialogProps) => {
+export const ZenodoLinkDialog = ({ open, onOpenChange, articleId, walletAddress, onSuccess }: ZenodoLinkDialogProps) => {
   const [zenodoInput, setZenodoInput] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -58,12 +59,18 @@ export const ZenodoLinkDialog = ({ open, onOpenChange, articleId, onSuccess }: Z
     setLoading(true);
 
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('articles')
         .update({ zenodo_doi: doi })
-        .eq('id', articleId);
+        .eq('id', articleId)
+        .eq('wallet_address', walletAddress.toLowerCase())
+        .select();
 
       if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error('Update failed - you may not own this article');
+      }
 
       toast({
         title: 'Success',

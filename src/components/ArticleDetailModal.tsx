@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalLink, Link as LinkIcon } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
+import { useAccount } from 'wagmi';
 import { ZenodoLinkDialog } from './ZenodoLinkDialog';
 import { IPALinkDialog } from './IPALinkDialog';
 import { TransactionLinkDialog } from './TransactionLinkDialog';
@@ -47,6 +48,7 @@ export const ArticleDetailModal = ({
   const [zenodoDialogOpen, setZenodoDialogOpen] = useState(false);
   const [ipaDialogOpen, setIpaDialogOpen] = useState(false);
   const [txDialogOpen, setTxDialogOpen] = useState(false);
+  const { address } = useAccount();
 
   if (!article) return null;
 
@@ -229,35 +231,42 @@ export const ArticleDetailModal = ({
         </DialogContent>
       </Dialog>
 
-      <ZenodoLinkDialog
-        open={zenodoDialogOpen}
-        onOpenChange={setZenodoDialogOpen}
-        articleId={article.id}
-        onSuccess={() => {
-          setZenodoDialogOpen(false);
-          onZenodoLinked();
-        }}
-      />
+      {address && (
+        <>
+          <ZenodoLinkDialog
+            open={zenodoDialogOpen}
+            onOpenChange={setZenodoDialogOpen}
+            articleId={article.id}
+            walletAddress={address}
+            onSuccess={() => {
+              setZenodoDialogOpen(false);
+              onZenodoLinked();
+            }}
+          />
 
-      <IPALinkDialog
-        open={ipaDialogOpen}
-        onOpenChange={setIpaDialogOpen}
-        articleId={article.id}
-        onSuccess={() => {
-          setIpaDialogOpen(false);
-          onZenodoLinked();
-        }}
-      />
+          <IPALinkDialog
+            open={ipaDialogOpen}
+            onOpenChange={setIpaDialogOpen}
+            articleId={article.id}
+            walletAddress={address}
+            onSuccess={() => {
+              setIpaDialogOpen(false);
+              onZenodoLinked();
+            }}
+          />
 
-      <TransactionLinkDialog
-        open={txDialogOpen}
-        onOpenChange={setTxDialogOpen}
-        articleId={article.id}
-        onSuccess={() => {
-          setTxDialogOpen(false);
-          onZenodoLinked();
-        }}
-      />
+          <TransactionLinkDialog
+            open={txDialogOpen}
+            onOpenChange={setTxDialogOpen}
+            articleId={article.id}
+            walletAddress={address}
+            onSuccess={() => {
+              setTxDialogOpen(false);
+              onZenodoLinked();
+            }}
+          />
+        </>
+      )}
     </>
   );
 };
