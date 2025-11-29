@@ -5,6 +5,8 @@ import { ExternalLink, Link as LinkIcon } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import { ZenodoLinkDialog } from './ZenodoLinkDialog';
+import { IPALinkDialog } from './IPALinkDialog';
+import { TransactionLinkDialog } from './TransactionLinkDialog';
 
 interface Author {
   orcid_id: string;
@@ -25,6 +27,10 @@ interface ArticleDetailModalProps {
     doi: string | null;
     zenodo_doi: string | null;
     ipfs_gateway_url: string;
+    pdf_ipfs_hash: string | null;
+    ip_asset_id: string | null;
+    transaction_hash: string | null;
+    network: string;
     authors: Author[];
   } | null;
   isOwner: boolean;
@@ -39,8 +45,22 @@ export const ArticleDetailModal = ({
   onZenodoLinked,
 }: ArticleDetailModalProps) => {
   const [zenodoDialogOpen, setZenodoDialogOpen] = useState(false);
+  const [ipaDialogOpen, setIpaDialogOpen] = useState(false);
+  const [txDialogOpen, setTxDialogOpen] = useState(false);
 
   if (!article) return null;
+
+  const getStoryExplorerUrl = (network: string, ipAssetId: string) => {
+    return network === 'testnet' 
+      ? `https://aeneid.explorer.story.foundation/ipa/${ipAssetId}`
+      : `https://explorer.story.foundation/ipa/${ipAssetId}`;
+  };
+
+  const getStoryScanUrl = (network: string, txHash: string) => {
+    return network === 'testnet'
+      ? `https://aeneid.storyscan.io/tx/${txHash}`
+      : `https://storyscan.io/tx/${txHash}`;
+  };
 
   const formatDate = (date: string | null) => {
     if (!date) return 'N/A';
@@ -144,14 +164,64 @@ export const ArticleDetailModal = ({
                 )
               )}
 
+              {article.ip_asset_id ? (
+                <Button asChild variant="outline">
+                  <a
+                    href={getStoryExplorerUrl(article.network, article.ip_asset_id)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    View on Story Explorer
+                  </a>
+                </Button>
+              ) : (
+                isOwner && (
+                  <Button
+                    variant="outline"
+                    onClick={() => setIpaDialogOpen(true)}
+                  >
+                    <LinkIcon className="w-4 h-4 mr-2" />
+                    Link IPA
+                  </Button>
+                )
+              )}
+
+              {article.transaction_hash ? (
+                <Button asChild variant="outline">
+                  <a
+                    href={getStoryScanUrl(article.network, article.transaction_hash)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    View Transaction
+                  </a>
+                </Button>
+              ) : (
+                isOwner && (
+                  <Button
+                    variant="outline"
+                    onClick={() => setTxDialogOpen(true)}
+                  >
+                    <LinkIcon className="w-4 h-4 mr-2" />
+                    Link Transaction
+                  </Button>
+                )
+              )}
+
               <Button asChild>
                 <a
-                  href={article.ipfs_gateway_url}
+                  href={
+                    article.pdf_ipfs_hash
+                      ? `https://gateway.pinata.cloud/ipfs/${article.pdf_ipfs_hash}`
+                      : article.ipfs_gateway_url
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <ExternalLink className="w-4 h-4 mr-2" />
-                  View on IPFS
+                  View PDF on IPFS
                 </a>
               </Button>
             </div>
@@ -165,6 +235,26 @@ export const ArticleDetailModal = ({
         articleId={article.id}
         onSuccess={() => {
           setZenodoDialogOpen(false);
+          onZenodoLinked();
+        }}
+      />
+
+      <IPALinkDialog
+        open={ipaDialogOpen}
+        onOpenChange={setIpaDialogOpen}
+        articleId={article.id}
+        onSuccess={() => {
+          setIpaDialogOpen(false);
+          onZenodoLinked();
+        }}
+      />
+
+      <TransactionLinkDialog
+        open={txDialogOpen}
+        onOpenChange={setTxDialogOpen}
+        articleId={article.id}
+        onSuccess={() => {
+          setTxDialogOpen(false);
           onZenodoLinked();
         }}
       />

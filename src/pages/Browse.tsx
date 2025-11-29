@@ -20,6 +20,10 @@ interface Article {
   submitted_at: string | null;
   keywords: string[] | null;
   ipfs_gateway_url: string;
+  pdf_ipfs_hash: string | null;
+  ip_asset_id: string | null;
+  transaction_hash: string | null;
+  network: string;
   doi: string | null;
   zenodo_doi: string | null;
   wallet_address: string | null;
@@ -58,6 +62,10 @@ const Browse = () => {
           submitted_at,
           keywords,
           ipfs_gateway_url,
+          pdf_ipfs_hash,
+          ip_asset_id,
+          transaction_hash,
+          network,
           doi,
           zenodo_doi,
           wallet_address,
@@ -234,10 +242,13 @@ const Browse = () => {
                         className="gap-2"
                         onClick={(e) => {
                           e.stopPropagation();
-                          window.open(article.ipfs_gateway_url, '_blank');
+                          const pdfUrl = article.pdf_ipfs_hash
+                            ? `https://gateway.pinata.cloud/ipfs/${article.pdf_ipfs_hash}`
+                            : article.ipfs_gateway_url;
+                          window.open(pdfUrl, '_blank');
                         }}
                       >
-                        View on IPFS
+                        View PDF
                         <ExternalLink className="h-3 w-3" />
                       </Button>
                     </div>
