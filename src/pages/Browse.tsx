@@ -297,7 +297,15 @@ const Browse = () => {
           if (!open) setSelectedArticleId(null);
         }}
         article={selectedArticle}
-        isOwner={address?.toLowerCase() === selectedArticle?.wallet_address?.toLowerCase()}
+        isOwner={
+          !!address &&
+          !!selectedArticle?.wallet_address &&
+          address.toLowerCase() === selectedArticle.wallet_address.toLowerCase()
+        }
+        canClaim={
+          !!address &&
+          !selectedArticle?.wallet_address
+        }
         onZenodoLinked={fetchArticles}
       />
     </div>
