@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { WalletConnect } from '@/components/WalletConnect';
 import { NetworkToggle } from '@/components/NetworkToggle';
+import { ZenodoLinkDialog } from '@/components/ZenodoLinkDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, Search, ArrowLeft, ExternalLink } from 'lucide-react';
+import { BookOpen, Search, ArrowLeft, ExternalLink, Link as LinkIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Article {
@@ -19,6 +21,8 @@ interface Article {
   keywords: string[] | null;
   ipfs_gateway_url: string;
   doi: string | null;
+  zenodo_doi: string | null;
+  author_id: string;
   authors: {
     author_name: string;
     orcid_id: string;
@@ -29,7 +33,10 @@ const Browse = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [zenodoDialogOpen, setZenodoDialogOpen] = useState(false);
+  const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchArticles();
@@ -42,7 +49,7 @@ const Browse = () => {
       // Fetch articles with authors
       const { data: articlesData, error: articlesError } = await supabase
         .from('articles')
-        .select('*')
+        .select('id, title, abstract, created_at, submitted_at, keywords, ipfs_gateway_url, doi, zenodo_doi, author_id')
         .order('created_at', { ascending: false });
 
       if (articlesError) throw articlesError;
@@ -74,6 +81,11 @@ const Browse = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleZenodoLink = (articleId: string) => {
+    setSelectedArticleId(articleId);
+    setZenodoDialogOpen(true);
   };
 
   const filteredArticles = articles.filter((article) => {
@@ -166,9 +178,22 @@ const Browse = () => {
                           ))}
                         </CardDescription>
                       </div>
-                      {article.doi && (
-                        <Badge variant="secondary">DOI</Badge>
-                      )}
+                      <div className="flex gap-2">
+                        {article.doi && (
+                          <Badge variant="secondary">DOI</Badge>
+                        )}
+                        {article.zenodo_doi && (
+                          <a
+                            href={`https://doi.org/${article.zenodo_doi}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Badge variant="default" className="cursor-pointer hover:opacity-80">
+                              Zenodo
+                            </Badge>
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -186,20 +211,33 @@ const Browse = () => {
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between pt-2">
+                    <div className="flex items-center justify-between pt-2 flex-wrap gap-2">
                       <p className="text-xs text-muted-foreground">
                         Published {formatDate(article.submitted_at || article.created_at)}
                       </p>
-                      <a
-                        href={article.ipfs_gateway_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button variant="outline" size="sm" className="gap-2">
-                          View on IPFS
-                          <ExternalLink className="h-3 w-3" />
-                        </Button>
-                      </a>
+                      <div className="flex gap-2">
+                        {!article.zenodo_doi && user?.id === article.author_id && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-2"
+                            onClick={() => handleZenodoLink(article.id)}
+                          >
+                            <LinkIcon className="h-3 w-3" />
+                            Link to Zenodo
+                          </Button>
+                        )}
+                        <a
+                          href={article.ipfs_gateway_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button variant="outline" size="sm" className="gap-2">
+                            View on IPFS
+                            <ExternalLink className="h-3 w-3" />
+                          </Button>
+                        </a>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -208,6 +246,15 @@ const Browse = () => {
           )}
         </div>
       </main>
+
+      {selectedArticleId && (
+        <ZenodoLinkDialog
+          open={zenodoDialogOpen}
+          onOpenChange={setZenodoDialogOpen}
+          articleId={selectedArticleId}
+          onSuccess={fetchArticles}
+        />
+      )}
     </div>
   );
 };
