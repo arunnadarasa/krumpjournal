@@ -36,7 +36,7 @@ export const WalletConnect = () => {
                     className="font-medium gap-2"
                   >
                     <Wallet className="h-4 w-4" />
-                    Connect Wallet
+                    <span className="hidden sm:inline">Connect Wallet</span>
                   </Button>
                 );
               }

@@ -22,7 +22,7 @@ export const NetworkToggle = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
           <span className="text-xs">
-            {isMainnet ? '🟢' : '🟡'} {isMainnet ? 'Mainnet' : 'Testnet'}
+            {isMainnet ? '🟢' : '🟡'} <span className="hidden sm:inline">{isMainnet ? 'Mainnet' : 'Testnet'}</span>
           </span>
           <ChevronDown className="h-3 w-3" />
         </Button>

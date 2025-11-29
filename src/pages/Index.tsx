@@ -8,13 +8,13 @@ const Index = () => {
     background: 'var(--gradient-subtle)'
   }}>
       <header className="border-b border-border/40 backdrop-blur-sm">
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-4 md:px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
               <BookOpen className="h-6 w-6 text-accent" />
               <h1 className="text-xl font-semibold">Krump Journal</h1>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               <NetworkToggle />
               <WalletConnect />
             </div>
