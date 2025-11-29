@@ -134,9 +134,9 @@ const Browse = () => {
       background: 'var(--gradient-subtle)'
     }}>
       <header className="border-b border-border/40 backdrop-blur-sm">
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-4 md:px-6 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <Link to="/">
                 <Button variant="ghost" size="icon">
                   <ArrowLeft className="h-5 w-5" />
@@ -144,10 +144,12 @@ const Browse = () => {
               </Link>
               <div className="flex items-center gap-2">
                 <BookOpen className="h-6 w-6 text-accent" />
-                <h1 className="text-xl font-semibold">Browse Articles</h1>
+                <h1 className="text-lg sm:text-xl font-semibold">
+                  <span className="hidden sm:inline">Browse </span>Articles
+                </h1>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               <NetworkToggle />
               <WalletConnect />
             </div>
@@ -155,7 +157,7 @@ const Browse = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-6 py-12">
+      <main className="container mx-auto px-4 md:px-6 py-6 md:py-12">
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Search Bar */}
           <div className="relative">
@@ -189,10 +191,10 @@ const Browse = () => {
                   onClick={() => handleArticleClick(article)}
                 >
                   <CardHeader>
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex flex-col-reverse sm:flex-row sm:items-start sm:justify-between gap-3">
                       <div className="flex-1">
-                        <CardTitle className="text-2xl mb-2">{article.title}</CardTitle>
-                        <CardDescription className="text-base">
+                        <CardTitle className="text-xl sm:text-2xl mb-2">{article.title}</CardTitle>
+                        <CardDescription className="text-sm sm:text-base">
                           {article.authors
                             .sort((a, b) => a.author_order - b.author_order)
                             .map((author, idx) => (
@@ -203,7 +205,7 @@ const Browse = () => {
                             ))}
                         </CardDescription>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <Badge 
                           variant={article.network === 'mainnet' ? 'default' : 'outline'}
                           className={article.network === 'mainnet' 
@@ -246,11 +248,11 @@ const Browse = () => {
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between pt-2 flex-wrap gap-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-2 gap-2">
                       <p className="text-xs text-muted-foreground">
                         Published {formatDate(article.submitted_at || article.created_at)}
                       </p>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap gap-2">
                         {article.zenodo_doi && (
                           <Button
                             variant="outline"
