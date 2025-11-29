@@ -38,10 +38,15 @@ const Browse = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const { toast } = useToast();
   const { address } = useAccount();
+
+  // Derive selectedArticle from articles array to ensure it's always up-to-date
+  const selectedArticle = selectedArticleId 
+    ? articles.find(a => a.id === selectedArticleId) || null 
+    : null;
 
   useEffect(() => {
     fetchArticles();
@@ -98,7 +103,7 @@ const Browse = () => {
   };
 
   const handleArticleClick = (article: Article) => {
-    setSelectedArticle(article);
+    setSelectedArticleId(article.id);
     setDetailModalOpen(true);
   };
 
@@ -262,7 +267,10 @@ const Browse = () => {
 
       <ArticleDetailModal
         open={detailModalOpen}
-        onOpenChange={setDetailModalOpen}
+        onOpenChange={(open) => {
+          setDetailModalOpen(open);
+          if (!open) setSelectedArticleId(null);
+        }}
         article={selectedArticle}
         isOwner={address?.toLowerCase() === selectedArticle?.wallet_address?.toLowerCase()}
         onZenodoLinked={fetchArticles}
