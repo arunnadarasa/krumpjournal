@@ -8,6 +8,7 @@ import { useAccount } from 'wagmi';
 import { ZenodoLinkDialog } from './ZenodoLinkDialog';
 import { IPALinkDialog } from './IPALinkDialog';
 import { TransactionLinkDialog } from './TransactionLinkDialog';
+import { ClaimArticleDialog } from './ClaimArticleDialog';
 
 interface Author {
   orcid_id: string;
@@ -32,9 +33,11 @@ interface ArticleDetailModalProps {
     ip_asset_id: string | null;
     transaction_hash: string | null;
     network: string;
+    wallet_address: string | null;
     authors: Author[];
   } | null;
   isOwner: boolean;
+  canClaim: boolean;
   onZenodoLinked: () => void;
 }
 
@@ -43,11 +46,13 @@ export const ArticleDetailModal = ({
   onOpenChange,
   article,
   isOwner,
+  canClaim,
   onZenodoLinked,
 }: ArticleDetailModalProps) => {
   const [zenodoDialogOpen, setZenodoDialogOpen] = useState(false);
   const [ipaDialogOpen, setIpaDialogOpen] = useState(false);
   const [txDialogOpen, setTxDialogOpen] = useState(false);
+  const [claimDialogOpen, setClaimDialogOpen] = useState(false);
   const { address } = useAccount();
 
   if (!article) return null;
@@ -143,6 +148,16 @@ export const ArticleDetailModal = ({
 
             {/* Actions */}
             <div className="flex flex-wrap gap-3 pt-4 border-t">
+              {canClaim && (
+                <Button
+                  variant="default"
+                  onClick={() => setClaimDialogOpen(true)}
+                >
+                  <LinkIcon className="w-4 h-4 mr-2" />
+                  Claim Article
+                </Button>
+              )}
+
               {article.zenodo_doi ? (
                 <Button asChild variant="outline">
                   <a
@@ -155,7 +170,7 @@ export const ArticleDetailModal = ({
                   </a>
                 </Button>
               ) : (
-                isOwner && (
+                isOwner && !canClaim && (
                   <Button
                     variant="outline"
                     onClick={() => setZenodoDialogOpen(true)}
@@ -178,7 +193,7 @@ export const ArticleDetailModal = ({
                   </a>
                 </Button>
               ) : (
-                isOwner && (
+                isOwner && !canClaim && (
                   <Button
                     variant="outline"
                     onClick={() => setIpaDialogOpen(true)}
@@ -201,7 +216,7 @@ export const ArticleDetailModal = ({
                   </a>
                 </Button>
               ) : (
-                isOwner && (
+                isOwner && !canClaim && (
                   <Button
                     variant="outline"
                     onClick={() => setTxDialogOpen(true)}
@@ -262,6 +277,17 @@ export const ArticleDetailModal = ({
             walletAddress={address}
             onSuccess={() => {
               setTxDialogOpen(false);
+              onZenodoLinked();
+            }}
+          />
+
+          <ClaimArticleDialog
+            open={claimDialogOpen}
+            onOpenChange={setClaimDialogOpen}
+            articleId={article.id}
+            walletAddress={address}
+            onSuccess={() => {
+              setClaimDialogOpen(false);
               onZenodoLinked();
             }}
           />
