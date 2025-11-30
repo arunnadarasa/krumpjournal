@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Editor } from '@tiptap/react';
 import { 
   Bold, 
@@ -19,17 +20,17 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { ImageUploadDialog } from './ImageUploadDialog';
 
 interface EditorToolbarProps {
   editor: Editor;
 }
 
 export const EditorToolbar = ({ editor }: EditorToolbarProps) => {
-  const addImage = () => {
-    const url = window.prompt('Enter image URL:');
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
+  const [imageDialogOpen, setImageDialogOpen] = useState(false);
+
+  const handleImageInsert = (url: string) => {
+    editor.chain().focus().setImage({ src: url }).run();
   };
 
   const addTable = () => {
@@ -160,7 +161,7 @@ export const EditorToolbar = ({ editor }: EditorToolbarProps) => {
       <Button
         variant="ghost"
         size="sm"
-        onClick={addImage}
+        onClick={() => setImageDialogOpen(true)}
       >
         <ImageIcon className="h-4 w-4" />
       </Button>
@@ -171,6 +172,12 @@ export const EditorToolbar = ({ editor }: EditorToolbarProps) => {
       >
         <TableIcon className="h-4 w-4" />
       </Button>
+
+      <ImageUploadDialog
+        open={imageDialogOpen}
+        onOpenChange={setImageDialogOpen}
+        onInsert={handleImageInsert}
+      />
     </div>
   );
 };
