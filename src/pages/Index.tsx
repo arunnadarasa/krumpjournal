@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { WalletConnect } from '@/components/WalletConnect';
 import { NetworkToggle } from '@/components/NetworkToggle';
+import { BuyIPButton } from '@/components/BuyIPButton';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Upload, Search, PenTool, ExternalLink, Link as LinkIcon, CheckCircle } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -16,6 +17,7 @@ const Index = () => {
               <h1 className="text-xl font-semibold">Krump Journal</h1>
             </div>
             <div className="flex items-center gap-2 md:gap-3">
+              <BuyIPButton />
               <NetworkToggle />
               <WalletConnect />
             </div>
