@@ -85,7 +85,7 @@ const Index = () => {
             animationDelay: '0.5s',
             opacity: 0
           }}>
-            <h3 className="text-lg font-semibold mb-4">Get Story Protocol Tokens</h3>
+            <h3 className="text-lg font-semibold mb-4">Get Story Tokens</h3>
             <div className="grid sm:grid-cols-2 gap-4">
               {/* Mainnet - Halliday */}
               <div className="p-4 rounded-lg bg-background/50 border border-border/30 text-left">
