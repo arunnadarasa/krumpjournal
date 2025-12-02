@@ -530,7 +530,7 @@ export default function Compose() {
         spgContractAddress: storyConfig.spgContract 
       });
 
-      toast.success('Minted on Story Protocol!', {
+      toast.success('Minted on Story!', {
         description: `IP Asset ID: ${response.ipId.slice(0, 20)}...`
       });
     } catch (error: any) {

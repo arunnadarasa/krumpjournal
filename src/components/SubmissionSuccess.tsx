@@ -73,7 +73,7 @@ License: CC BY 4.0`;
         <div className="flex items-start gap-2">
           <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5" />
           <div className="flex-1">
-            <p className="font-medium">Registered on Story Protocol</p>
+            <p className="font-medium">Registered on Story</p>
             <p className="text-sm text-muted-foreground">Intellectual property rights secured on-chain</p>
           </div>
         </div>
@@ -218,7 +218,7 @@ License: CC BY 4.0`;
 
           {transactionHash && (
             <div>
-              <p className="text-muted-foreground">Story Protocol Transaction</p>
+              <p className="text-muted-foreground">Story Transaction</p>
               <div className="flex items-center gap-2">
                 <code className="text-xs bg-muted px-2 py-1 rounded flex-1 truncate">
                   {transactionHash}

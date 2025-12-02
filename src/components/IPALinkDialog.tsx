@@ -105,7 +105,7 @@ export const IPALinkDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Link Story Protocol IPA</DialogTitle>
+          <DialogTitle>Link Story IPA</DialogTitle>
           <DialogDescription>
             Enter the IPA address or Story Explorer URL for this article.
           </DialogDescription>

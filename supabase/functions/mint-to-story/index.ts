@@ -27,7 +27,7 @@ serve(async (req) => {
     console.log('NFT Metadata URI:', nftMetadataUri);
     console.log('NFT Metadata Hash:', nftMetadataHash);
 
-    // Note: Actual Story minting would happen here using Story Protocol SDK
+    // Note: Actual Story minting would happen here using Story SDK
     // const response = await client.ipAsset.mintAndRegisterIp({
     //   spgNftContract: SPG_NFT_CONTRACT,
     //   ipMetadata: {
