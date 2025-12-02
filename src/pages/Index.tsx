@@ -3,12 +3,14 @@ import { WalletConnect } from '@/components/WalletConnect';
 import { NetworkToggle } from '@/components/NetworkToggle';
 import { BuyIPButton } from '@/components/BuyIPButton';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Upload, Search, PenTool, ExternalLink, Link as LinkIcon, CheckCircle } from 'lucide-react';
+import { BookOpen, Upload, Search, PenTool, ExternalLink, Droplets, Coins } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+
 const Index = () => {
-  return <div className="grain-texture min-h-screen" style={{
-    background: 'var(--gradient-subtle)'
-  }}>
+  return (
+    <div className="grain-texture min-h-screen" style={{
+      background: 'var(--gradient-subtle)'
+    }}>
       <header className="border-b border-border/40 backdrop-blur-sm">
         <div className="container mx-auto px-4 md:px-6 py-4">
           <div className="flex justify-between items-center">
@@ -18,6 +20,16 @@ const Index = () => {
             </div>
             <div className="flex items-center gap-2 md:gap-3">
               <BuyIPButton />
+              <Button asChild variant="outline" size="sm" className="gap-2">
+                <a 
+                  href="https://cloud.google.com/application/web3/faucet/story/aeneid" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <Droplets className="h-4 w-4" />
+                  <span className="hidden sm:inline">Faucet</span>
+                </a>
+              </Button>
               <NetworkToggle />
               <WalletConnect />
             </div>
@@ -29,9 +41,9 @@ const Index = () => {
         <div className="max-w-4xl mx-auto text-center space-y-12">
           {/* Hero */}
           <div className="space-y-6 animate-fade-in" style={{
-          animationDelay: '0.1s',
-          opacity: 0
-        }}>
+            animationDelay: '0.1s',
+            opacity: 0
+          }}>
             <h2 className="text-6xl md:text-7xl lg:text-8xl tracking-tight text-foreground">
               Decentralized
               <br />
@@ -45,9 +57,9 @@ const Index = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{
-          animationDelay: '0.4s',
-          opacity: 0
-        }}>
+            animationDelay: '0.4s',
+            opacity: 0
+          }}>
             <Link to="/compose">
               <Button size="lg" className="w-full sm:w-auto gap-2">
                 <PenTool className="h-4 w-4" />
@@ -68,11 +80,54 @@ const Index = () => {
             </Link>
           </div>
 
+          {/* Developer Resources - Get Tokens */}
+          <div className="bg-card/50 rounded-xl border border-border/40 p-6 animate-fade-in" style={{
+            animationDelay: '0.5s',
+            opacity: 0
+          }}>
+            <h3 className="text-lg font-semibold mb-4">Get Story Protocol Tokens</h3>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {/* Mainnet - Halliday */}
+              <div className="p-4 rounded-lg bg-background/50 border border-border/30 text-left">
+                <div className="flex items-center gap-2 mb-2">
+                  <Coins className="h-5 w-5 text-accent" />
+                  <span className="font-medium">Mainnet $IP</span>
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Purchase real $IP tokens for production use via Halliday
+                </p>
+                <BuyIPButton />
+              </div>
+              
+              {/* Testnet - Faucet */}
+              <div className="p-4 rounded-lg bg-background/50 border border-border/30 text-left">
+                <div className="flex items-center gap-2 mb-2">
+                  <Droplets className="h-5 w-5 text-blue-400" />
+                  <span className="font-medium">Testnet $IP</span>
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Get free testnet tokens for development on Story Aeneid
+                </p>
+                <Button asChild variant="outline" size="sm" className="gap-2">
+                  <a 
+                    href="https://cloud.google.com/application/web3/faucet/story/aeneid" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <Droplets className="h-4 w-4" />
+                    Get Testnet Tokens
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </Button>
+              </div>
+            </div>
+          </div>
+
           {/* Features */}
           <div className="grid md:grid-cols-3 gap-8 pt-12 animate-fade-in" style={{
-          animationDelay: '0.6s',
-          opacity: 0
-        }}>
+            animationDelay: '0.6s',
+            opacity: 0
+          }}>
             <div className="space-y-3">
               <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
                 <BookOpen className="h-6 w-6 text-accent" />
@@ -106,9 +161,9 @@ const Index = () => {
 
           {/* ORCID Integration Guide */}
           <div className="pt-16 animate-fade-in" style={{
-          animationDelay: '1s',
-          opacity: 0
-        }}>
+            animationDelay: '1s',
+            opacity: 0
+          }}>
             <div className="bg-card/50 rounded-2xl border border-border/40 p-6 md:p-8">
               <div className="text-center mb-6">
                 <h3 className="text-2xl md:text-3xl font-semibold mb-2">Add Your Article to ORCID</h3>
@@ -196,9 +251,9 @@ const Index = () => {
 
           {/* Tech Stack */}
           <div className="pt-12 border-t border-border/40 animate-fade-in" style={{
-          animationDelay: '0.8s',
-          opacity: 0
-        }}>
+            animationDelay: '0.8s',
+            opacity: 0
+          }}>
             <p className="text-xs text-muted-foreground/60 mb-4">Powered by</p>
             <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground/80">
               <span>Story</span>
@@ -214,6 +269,8 @@ const Index = () => {
           </div>
         </div>
       </main>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
