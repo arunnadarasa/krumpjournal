@@ -577,6 +577,7 @@ export default function Compose() {
           license,
           network,
           author_id: user.id,
+          wallet_address: walletAddress?.toLowerCase(),
           status: 'published',
           minted_at: new Date().toISOString(),
         })
